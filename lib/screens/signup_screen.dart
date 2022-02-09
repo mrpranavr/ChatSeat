@@ -1,32 +1,24 @@
-// ignore_for_file: prefer_const_constructors
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:onionchatflutter/constants.dart';
-import 'package:onionchatflutter/viewmodel/loginviewmodel.dart';
 
-class LoginScreen extends StatefulWidget {
-  static const routeName = '/login';
+import '../constants.dart';
+
+class SignUpScreen extends StatefulWidget {
+  static const routeName = '/signUp';
+  const SignUpScreen({Key? key}) : super(key: key);
+
   @override
-  State<StatefulWidget> createState() {
-    return _LoginScreenState();
-  }
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  bool isLoggingIn = false;
+class _SignUpScreenState extends State<SignUpScreen> {
+  // bool isLoggingIn = false;
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _password_visible = false;
 
-  final loginViewModel = LoginViewModel();
   @override
-  Widget build(final BuildContext context) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      // ),
       body: GestureDetector(
         onTap: (() {
           FocusScope.of(context).requestFocus(new FocusNode());
@@ -62,6 +54,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 60,
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Create new username',
+                      style: form_heading,
+                    ),
+                    Text(
+                      'minimum 5 characters',
+                      style: form_heading,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
                 TextField(
                   scrollPadding: EdgeInsets.only(
                       bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -87,6 +93,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 25,
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Create new password', style: form_heading),
+                    Text('minimum 7 characters', style: form_heading),
+                  ],
+                ),
+                const SizedBox(height: 10),
+
                 TextField(
                   scrollPadding: EdgeInsets.only(
                       bottom: MediaQuery.of(context).viewInsets.bottom),
@@ -98,14 +113,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       icon: Icon(_password_visible
                           ? Icons.visibility_rounded
                           : Icons.visibility_off_rounded),
-                      color: Color(0xff4A4A4A),
+                      color: const Color(0xff4A4A4A),
                       onPressed: () {
                         setState(() {
                           _password_visible = !_password_visible;
                         });
                       },
                     ),
-                    enabledBorder: OutlineInputBorder(
+                    enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.transparent),
                       borderRadius: BorderRadius.all(
                         Radius.circular(20),
@@ -116,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     filled: true,
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: text_field_color, width: 3),
-                      borderRadius: BorderRadius.all(
+                      borderRadius: const BorderRadius.all(
                         Radius.circular(20),
                       ),
                     ),
@@ -127,22 +142,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 50,
                 ),
                 ElevatedButton(
-                  onPressed: () async {
-                    isLoggingIn = true;
-                    final result = await loginViewModel.login(
-                        _usernameController.text, _passwordController.text);
-                    if (result.isLeft) {
-                      final error = result.left;
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Failed with state: ${error.state}")));
-                    } else {
-                      final connection = result.right;
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              "Logged in as: ${connection.account.username} - with state: ${connection.state}")));
-                      connection.close();
-                    }
-                  },
+                  // add the sign up function here
+                  onPressed: () {},
                   style: ElevatedButton.styleFrom(
                       primary: Colors.transparent,
                       padding: EdgeInsets.zero,
@@ -157,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 55,
                       child: Center(
                         child: Text(
-                          'Login',
+                          'Sign Up',
                           style: TextStyle(
                             fontFamily: FontFamily_main,
                             fontSize: 23,
@@ -175,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'New to OnionChat? ',
+                      'Already have an account? ',
                       style: TextStyle(
                         fontFamily: FontFamily_main,
                         fontSize: 18,
@@ -185,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     GestureDetector(
                       child: Text(
-                        'Sign Up here',
+                        'Login here',
                         style: TextStyle(
                           fontFamily: FontFamily_main,
                           fontSize: 18,
@@ -194,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       onTap: () {
-                        Navigator.of(context).pushNamed('/signUp');
+                        Navigator.of(context).pop();
                       },
                     )
                   ],
