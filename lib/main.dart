@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onionchatflutter/constants.dart';
+import 'package:onionchatflutter/routes.dart';
 import 'package:onionchatflutter/screens/loginscreen.dart';
 
 void main() {
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: scaffold_color,
       ),
       home: LoginScreen(),
+      routes: route,
     );
   }
 }
