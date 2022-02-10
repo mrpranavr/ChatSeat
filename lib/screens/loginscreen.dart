@@ -7,6 +7,8 @@ import 'package:onionchatflutter/viewmodel/loginviewmodel.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/login';
+
+  LoginScreen({Key? key}) : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return _LoginScreenState();
@@ -50,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     foreground: Paint()..shader = headingGradient,
                   ),
                 ),
-                Text(
+                const Text(
                   'Enjoy true anonymity',
                   style: TextStyle(
                     fontFamily: FontFamily_main,
