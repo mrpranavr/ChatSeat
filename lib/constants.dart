@@ -5,9 +5,13 @@ import 'package:flutter/material.dart';
 
 // --------------All color palettes are here --------------
 // --------------------------------------------------------
-Color scaffold_color = Color(0xffF6F6F6);
-Color sub_heading_color = Color.fromRGBO(50, 17, 83, 0.6);
-Color text_field_color = Color(0xff822FAF);
+const Color scaffold_color = Color(0xffF6F6F6);
+const Color sub_heading_color = Color.fromRGBO(50, 17, 83, 0.6);
+const Color text_field_color = Color(0xff822FAF);
+const Color heading_color = Color(0xff973AA8);
+const Color accent_pink = Color(0xffEA698B);
+const Color dark_accent = Color(0xff6D23B6);
+const Color nav_secondary = Color(0xff4F6266);
 
 // ---------------- Gradients -----------------------------
 // --------------------------------------------------------
@@ -26,13 +30,20 @@ dynamic button_gradient = const LinearGradient(colors: [
   Color(0xff822faf),
 ]);
 
+final Shader nameHeadingGradient = const LinearGradient(colors: [
+  Color(0xffBA8CE9),
+  Color(0xffCE78B0),
+]).createShader(
+  const Rect.fromLTWH(0.0, 0.0, 250.0, 70.0),
+);
+
 // -------------- Fonts -----------------------------------
 // --------------------------------------------------------
-String FontFamily_main = 'Nunito';
+const String FontFamily_main = 'Nunito';
 
 // -------------------- TextStyles---------------------------
 // ----------------------------------------------------------
-TextStyle form_heading = TextStyle(
+TextStyle form_heading = const TextStyle(
   fontFamily: FontFamily_main,
   fontWeight: FontWeight.normal,
   fontSize: 15,
