@@ -9,8 +9,7 @@ const _resource = 'OnionChat';
 const _host = '79.110.52.158';
 
 class LoginViewModel {
-  Future<Either<ConnectionError, xmpp.Connection>> login(final String username,
-      final String password) async {
+  Future<Either<ConnectionError, xmpp.Connection>> login(final String username, final String password) async {
     final xmpp.XmppAccountSettings accountSettings = xmpp.XmppAccountSettings(
       "$username@$_domain",
       username,
@@ -20,10 +19,11 @@ class LoginViewModel {
       resource: _resource,
       host: _host,
     );
+
     final xmpp.Connection connection = xmpp.Connection(accountSettings);
     connection.connect();
-    final xmpp.XmppConnectionState terminalState =
-        await connection.fetchTerminalConnectionState();
+    final xmpp.XmppConnectionState terminalState = await connection.fetchTerminalConnectionState();
+
     return Either.condLazy(
         terminalState == xmpp.XmppConnectionState.Authenticated,
         () {
