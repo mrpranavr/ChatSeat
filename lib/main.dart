@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:onionchatflutter/constants.dart';
 import 'package:onionchatflutter/routes.dart';
-import 'package:onionchatflutter/screens/All_chats_screen.dart';
-import 'package:onionchatflutter/screens/loginscreen.dart';
+import 'package:onionchatflutter/screens/contacts_screen.dart';
+import 'package:onionchatflutter/screens/login_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: scaffold_color,
       ),
       // Currently home is this one, After finished replace with LoginScreen()
-      home: AllChatsScreen(),
+      home: LoginScreen(),
       routes: route,
     );
   }

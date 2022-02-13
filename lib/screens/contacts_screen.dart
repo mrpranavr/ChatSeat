@@ -5,16 +5,16 @@ import 'package:onionchatflutter/widgets/Nav_drawer.dart';
 
 import '../widgets/Chat_cards.dart';
 
-class AllChatsScreen extends StatefulWidget {
-  static const routeName = '/AllChats';
+class ContactsScreen extends StatefulWidget {
+  static const routeName = '/contacts';
 
-  const AllChatsScreen({Key? key}) : super(key: key);
+  const ContactsScreen({Key? key}) : super(key: key);
 
   @override
-  _AllChatsScreenState createState() => _AllChatsScreenState();
+  _ContactsScreenState createState() => _ContactsScreenState();
 }
 
-class _AllChatsScreenState extends State<AllChatsScreen> {
+class _ContactsScreenState extends State<ContactsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
