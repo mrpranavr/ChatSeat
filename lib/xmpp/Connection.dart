@@ -196,7 +196,7 @@ xml:lang='en'
     connectionNegotatiorManager?.init();
     setState(XmppConnectionState.SocketOpening);
     try {
-      return await Socket.connect(account.host ?? account.domain, account.port)
+      return await account.proxy.createProxySocket(account.host ?? account.domain, account.port)
           .then((Socket socket) {
         // if not closed in meantime
         if (_state != XmppConnectionState.Closed) {

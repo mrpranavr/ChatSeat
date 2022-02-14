@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:onionchatflutter/xmpp/data/Jid.dart';
 
 class XmppAccountSettings {
+  Proxy proxy;
   String name;
   String username;
   String domain;
@@ -15,25 +16,43 @@ class XmppAccountSettings {
   int reconnectionTimeout = 1000;
   bool ackEnabled = true;
 
-  XmppAccountSettings(this.name, this.username, this.domain, this.password, this.port, {this.host, this.resource = ''} );
+  XmppAccountSettings(this.name, this.username, this.domain, this.password, this.port, {this.host, this.resource = '', this.proxy = noProxy} );
 
   Jid get fullJid => Jid(username, domain, resource);
 
-  static XmppAccountSettings fromJid(String jid, String password) {
+  static XmppAccountSettings fromJid(String jid, String password, {Proxy proxy = noProxy}) {
     var fullJid = Jid.fromFullJid(jid);
     return XmppAccountSettings(jid, fullJid.local ?? '', fullJid.domain ?? '', password, 5222);
   }
 }
 
-class Proxy {
+const noProxy = _PassthroughProxy();
+
+abstract class Proxy {
   final ProxyType type;
+
+  const Proxy({this.type = ProxyType.NONE});
+
+  Future<Socket> createProxySocket(final String connectionHost, final int connectionPort);
+}
+
+class _PassthroughProxy extends Proxy {
+  const _PassthroughProxy() : super(type: ProxyType.NONE);
+
+  @override
+  Future<Socket> createProxySocket(String connectionHost, int connectionPort) {
+    return Socket.connect(connectionHost, connectionPort);
+  }
+}
+
+class Socks4Proxy extends Proxy {
   final String host;
   final int port;
   final String? username;
   final String? password;
+  Socks4Proxy({required this.host, required this.port, this.username, this.password}) : super(type: ProxyType.SOCKS4);
 
-  Proxy(this.type, this.host, this.port, {this.username, this.password});
-
+  @override
   Future<Socket> createProxySocket(final String connectionHost, final int connectionPort) async {
     final Socket socket = await Socket.connect(
       InternetAddress.loopbackIPv4,
@@ -58,8 +77,10 @@ class Proxy {
     ]);
     return socket;
   }
+
 }
 
 enum ProxyType {
-  SOCKS5
+  NONE,
+  SOCKS4
 }
