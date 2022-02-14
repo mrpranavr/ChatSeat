@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:either_dart/either.dart';
-import 'package:xmpp_stone/xmpp_stone.dart' as xmpp;
+import 'package:onionchatflutter/xmpp/xmpp_stone.dart' as xmpp;
 
 const _domain = 'dedf54xrpkdkekxc36ky4kofo6yq5gdndevh3mrpjlvdmcafsfsw2mqd.onion';
 const _port = 5222;
