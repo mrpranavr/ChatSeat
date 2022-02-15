@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:onionchatflutter/Modals/Messages.dart';
 import 'package:onionchatflutter/constants.dart';
 import 'package:onionchatflutter/widgets/Attachment_message.dart';
 import 'package:onionchatflutter/widgets/Normal_message.dart';
-import 'package:onionchatflutter/widgets/Recording_chat.dart';
+import 'package:onionchatflutter/widgets/Audio_message.dart';
+import 'package:provider/provider.dart';
 
 class ChatScreen extends StatefulWidget {
   static const routeName = '/ChatScreen';
@@ -21,22 +23,25 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   Future.delayed(Duration.zero, () {
-  //     setState(() {
-  //       var args = ModalRoute.of(context)?.settings.arguments;
-  //     });
-  //     // print(args['name']);
-  //     // _yourFunction(args);
-  //   });
-  // }
+  final _messageController = TextEditingController();
 
-  String editTime(String time) {
-    var newTime = time.split(' ')[1];
-    return newTime;
+  Messages formatMessage(String message) {
+    String time = DateFormat.yMMMd().add_jm().format(DateTime.now());
+    String type = 'normal';
+    String sendType = 'sent';
+    return Messages(
+        type: type,
+        sendType: sendType,
+        message: message,
+        time: time,
+        attachmentUrl: '');
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _messageController.dispose();
   }
 
   @override
@@ -49,7 +54,7 @@ class _ChatScreenState extends State<ChatScreen> {
           FocusScope.of(context).requestFocus(new FocusNode());
         }),
         child: Container(
-          padding: EdgeInsets.fromLTRB(0, 35, 0, 0),
+          padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
           child: Column(
             children: [
               Row(
@@ -109,38 +114,45 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: Column(
                     children: [
                       Expanded(
-                        child: ListView.builder(
-                          // controller: _controller,
-                          reverse: true,
-                          itemCount: SpoofMessages.length,
-                          itemBuilder: (context, index) {
-                            final reversedIndex =
-                                SpoofMessages.length - 1 - index;
-                            String message =
-                                SpoofMessages[reversedIndex].message;
-                            String time = SpoofMessages[reversedIndex].time;
-                            String sendType =
-                                SpoofMessages[reversedIndex].sendType;
-                            String type = SpoofMessages[reversedIndex].type;
-                            String attachmentUrl =
-                                SpoofMessages[reversedIndex].attachmentUrl;
-                            if (type == 'recording') {
-                              return Recording_message();
-                            } else if (type == 'attachment') {
-                              return Attachment_message(
-                                sendType: sendType,
-                                url: attachmentUrl,
-                                time: editTime(time),
-                              );
-                            } else {
-                              return Normal_message(
-                                sendType: sendType,
-                                message: message,
-                                time: editTime(time),
-                              );
-                            }
-                          },
-                        ),
+                        child: Consumer<ChatMessage>(
+                            builder: (context, Messages, index) {
+                          return ListView.builder(
+                            // controller: _controller,
+                            reverse: true,
+                            itemCount: Messages.SpoofMessages.length,
+                            itemBuilder: (context, index) {
+                              final reversedIndex =
+                                  Messages.SpoofMessages.length - 1 - index;
+                              String message =
+                                  Messages.SpoofMessages[reversedIndex].message;
+                              String time =
+                                  Messages.SpoofMessages[reversedIndex].time;
+                              String sendType = Messages
+                                  .SpoofMessages[reversedIndex].sendType;
+                              String type =
+                                  Messages.SpoofMessages[reversedIndex].type;
+                              String attachmentUrl = Messages
+                                  .SpoofMessages[reversedIndex].attachmentUrl;
+                              if (type == 'recording') {
+                                return AudioMessage();
+                              } else if (type == 'attachment') {
+                                return Attachment_message(
+                                  sendType: sendType,
+                                  url: attachmentUrl,
+                                  time: time,
+                                );
+                              } else {
+                                return Normal_message(
+                                  sendType: sendType,
+                                  message: message,
+                                  time: time,
+                                );
+                              }
+                            },
+                          );
+                        }
+                            // child:
+                            ),
                       ),
                       SizedBox(
                         height: 10,
@@ -149,6 +161,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         children: [
                           Expanded(
                             child: TextField(
+                              controller: _messageController,
                               scrollPadding: EdgeInsets.only(
                                   bottom:
                                       MediaQuery.of(context).viewInsets.bottom),
@@ -199,7 +212,19 @@ class _ChatScreenState extends State<ChatScreen> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              print('message sent');
+                              if (_messageController.text.isEmpty ||
+                                  _messageController.text.trim().isEmpty) {
+                                return;
+                              } else {
+                                print('message sent');
+
+                                Provider.of<ChatMessage>(context, listen: false)
+                                    .sentMessage(
+                                        formatMessage(_messageController.text));
+                                setState(() {
+                                  _messageController.clear();
+                                });
+                              }
                             },
                             child: Image.asset('Assets/Icons/Sent button.png'),
                           ),

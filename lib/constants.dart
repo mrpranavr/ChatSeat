@@ -30,6 +30,11 @@ dynamic button_gradient = const LinearGradient(colors: [
   Color(0xff822faf),
 ]);
 
+Gradient messageBoxGradient = const LinearGradient(colors: [
+  Color(0xff9E46CD),
+  Color(0xffB283E2),
+]);
+
 final Shader nameHeadingGradient = const LinearGradient(colors: [
   Color(0xffBA8CE9),
   Color(0xffCE78B0),
@@ -48,4 +53,10 @@ TextStyle form_heading = const TextStyle(
   fontWeight: FontWeight.normal,
   fontSize: 15,
   color: const Color(0xff949494),
+);
+
+TextStyle messageTimeStyle = const TextStyle(
+  fontWeight: FontWeight.bold,
+  fontSize: 12,
+  color: const Color(0xff808080),
 );

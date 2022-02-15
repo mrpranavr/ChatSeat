@@ -22,9 +22,9 @@ class Normal_message extends StatelessWidget {
             child: Container(
               constraints: const BoxConstraints(minWidth: 100, maxWidth: 300),
               padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 13),
-              decoration: const BoxDecoration(
-                color: heading_color,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                gradient: messageBoxGradient,
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(30),
                   bottomLeft: Radius.circular(20),
@@ -40,7 +40,16 @@ class Normal_message extends StatelessWidget {
               ),
             ),
           ),
-          Align(alignment: Alignment.centerRight, child: Text(time)),
+          const SizedBox(
+            height: 5,
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              time,
+              style: messageTimeStyle,
+            ),
+          ),
           const SizedBox(
             height: 20,
           )
@@ -55,7 +64,7 @@ class Normal_message extends StatelessWidget {
               constraints: const BoxConstraints(minWidth: 100, maxWidth: 300),
               padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 13),
               decoration: const BoxDecoration(
-                color: Color(0xffF0EEEE),
+                color: Color(0xffD9D6D6),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(20),
@@ -72,7 +81,16 @@ class Normal_message extends StatelessWidget {
               ),
             ),
           ),
-          Align(alignment: Alignment.centerLeft, child: Text(time)),
+          const SizedBox(
+            height: 5,
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              time,
+              style: messageTimeStyle,
+            ),
+          ),
           const SizedBox(
             height: 20,
           )
