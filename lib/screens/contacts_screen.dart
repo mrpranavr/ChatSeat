@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:onionchatflutter/Modals/Chat_info.dart';
 import 'package:onionchatflutter/constants.dart';
 import 'package:onionchatflutter/widgets/Nav_drawer.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/Chat_cards.dart';
 
@@ -20,7 +21,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
     return Scaffold(
       drawer: Nav_drawer(),
       body: Container(
-        padding: EdgeInsets.fromLTRB(15, 35, 15, 10),
+        padding: EdgeInsets.fromLTRB(15, 40, 15, 10),
         child: Column(
           children: [
             Container(
@@ -54,23 +55,36 @@ class _ContactsScreenState extends State<ContactsScreen> {
               height: 20,
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: chatsInfo.length,
-                itemBuilder: (context, index) {
-                  String name = chatsInfo[index].name;
-                  String latestMessage = chatsInfo[index].latestMessage;
-                  String imageUrl = chatsInfo[index].imageUrl;
-                  int unreadMessages = chatsInfo[index].unreadMessageCounter;
-                  return ChatCards(
-                      name: name,
-                      latestMessage: latestMessage,
-                      imageUrl: imageUrl,
-                      unreadMessages: unreadMessages);
-                },
+              child: Consumer<ChatCardsinfo>(
+                builder: ((context, value, child) {
+                  return ListView.builder(
+                    itemCount: value.chatInfo.length,
+                    itemBuilder: (context, index) {
+                      String name = value.chatInfo[index].name;
+                      String latestMessage =
+                          value.chatInfo[index].latestMessage;
+                      String imageUrl = value.chatInfo[index].imageUrl;
+                      int unreadMessages =
+                          value.chatInfo[index].unreadMessageCounter;
+                      return ChatCards(
+                          name: name,
+                          latestMessage: latestMessage,
+                          imageUrl: imageUrl,
+                          unreadMessages: unreadMessages);
+                    },
+                  );
+                }),
+                // child:
               ),
             ),
           ],
         ),
+      ),
+      floatingActionButton: GestureDetector(
+        onTap: () {
+          print('Add new contacts here');
+        },
+        child: Image.asset('Assets/Icons/AddContacts.png'),
       ),
     );
   }
