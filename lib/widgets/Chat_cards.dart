@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onionchatflutter/constants.dart';
+import 'package:onionchatflutter/screens/Chat_screen.dart';
 
 class ChatCards extends StatefulWidget {
   final String name;
@@ -24,6 +25,8 @@ class _ChatCardsState extends State<ChatCards> {
     return GestureDetector(
       onTap: () {
         print(widget.name);
+        Navigator.pushNamed(context, ChatScreen.routeName,
+            arguments: {'name': widget.name, 'imageUrl': widget.imageUrl});
       },
       child: Card(
         elevation: 0,
