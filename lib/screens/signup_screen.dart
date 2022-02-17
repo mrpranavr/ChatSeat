@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onionchatflutter/viewmodel/registration_view_model.dart';
 
 import '../constants.dart';
 
@@ -15,6 +16,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _password_visible = false;
+
+  final registrationViewModel = RegistrationViewModel();
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +146,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 ElevatedButton(
                   // add the sign up function here
-                  onPressed: () {},
+                  onPressed: () async {
+                    setState(() {
+                      isSigningUp = true;
+                    });
+                    final username = _usernameController.text;
+                    final password = _passwordController.text;
+                    final result = await registrationViewModel.register(
+                        username, password);
+                    if (result.isLeft) {
+                      final error = result.left;
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Connection failed: ${error.message}")));
+                    } else {
+                      final registrationResult = result.right;
+                      if (registrationResult.isLeft) {
+                        final error = registrationResult.left;
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("Error: ${error.code} - ${error.name}")));
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                "Successfully registered! Welcome, $username!")));
+                      }
+                    }
+                    setState(() {
+                      isSigningUp = false;
+                    });
+                  },
                   style: ElevatedButton.styleFrom(
                       primary: Colors.transparent,
                       padding: EdgeInsets.zero,

@@ -122,8 +122,8 @@ class RegistrationInfo {
 }
 
 class RegistrationError {
-  final int errorCode;
+  final int code;
   final String name;
 
-  RegistrationError(this.errorCode, this.name);
+  RegistrationError(this.code, this.name);
 }

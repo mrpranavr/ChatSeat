@@ -22,6 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _password_visible = false;
 
   final loginViewModel = LoginViewModel();
+
   @override
   Widget build(final BuildContext context) {
     return Scaffold(
@@ -138,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (result.isLeft) {
                       final error = result.left;
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Auth failed: ${error.message}")));
+                          content: Text("Error: ${error.message}")));
                     } else {
                       final connection = result.right;
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
