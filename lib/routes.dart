@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:onionchatflutter/screens/Chat_screen.dart';
+import 'package:onionchatflutter/screens/chat_screen.dart';
 import 'package:onionchatflutter/screens/contacts_screen.dart';
 import 'package:onionchatflutter/screens/login_screen.dart';
 import 'package:onionchatflutter/screens/signup_screen.dart';

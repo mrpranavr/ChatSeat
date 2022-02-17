@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:onionchatflutter/Modals/Messages.dart';
+import 'package:onionchatflutter/Modals/messages.dart';
 import 'package:onionchatflutter/constants.dart';
-import 'package:onionchatflutter/widgets/Attachment_message.dart';
-import 'package:onionchatflutter/widgets/Normal_message.dart';
-import 'package:onionchatflutter/widgets/Audio_message.dart';
+import 'package:onionchatflutter/widgets/attachment_message.dart';
+import 'package:onionchatflutter/widgets/normal_message.dart';
+import 'package:onionchatflutter/widgets/audio_message.dart';
 import 'package:provider/provider.dart';
 
 class ChatScreen extends StatefulWidget {

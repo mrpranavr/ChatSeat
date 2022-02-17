@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onionchatflutter/constants.dart';
-import 'package:onionchatflutter/screens/Chat_screen.dart';
+import 'package:onionchatflutter/screens/chat_screen.dart';
 
 class ChatCards extends StatefulWidget {
   final String name;
