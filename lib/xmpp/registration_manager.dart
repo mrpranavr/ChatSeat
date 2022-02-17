@@ -26,18 +26,18 @@ class RegistrationManager {
   final Map<String, Tuple2<IqStanza, Completer<RegistrationInfo>>>
       _unrespondedRegistrationInfoStanzas =
       <String, Tuple2<IqStanza, Completer<RegistrationInfo>>>{};
-  final Map<String, Tuple2<IqStanza, Completer<Either<RegistrationError, void>>>>
+  final Map<String, Tuple2<IqStanza, Completer<Either<RegistrationError, Void?>>>>
       _unrespondedRegistrationRequestStanzas =
-      <String, Tuple2<IqStanza, Completer<Either<RegistrationError, void>>>>{};
+      <String, Tuple2<IqStanza, Completer<Either<RegistrationError, Void?>>>>{};
 
   RegistrationManager(this._connection) {
     _connection.connectionStateStream.listen(_connectionStateProcessor);
     _connection.inStanzasStream.listen(_processStanza);
   }
 
-  Future<Either<RegistrationError, Void>> createAccount(
+  Future<Either<RegistrationError, Void?>> createAccount(
       {required final String username, required final String password}) {
-    var completer = Completer<Either<RegistrationError, Void>>();
+    var completer = Completer<Either<RegistrationError, Void?>>();
     var iqStanza = IqStanza(AbstractStanza.getRandomId(), IqStanzaType.SET);
     iqStanza.fromJid = _connection.fullJid;
     final registrationInfo = RegistrationInfo(
@@ -84,7 +84,7 @@ class RegistrationManager {
     if (requestStanza == null) return;
     _unrespondedRegistrationRequestStanzas.remove(stanza.id);
     if (stanza.type == IqStanzaType.RESULT) {
-      requestStanza?.item2.complete(const Right(null));
+      requestStanza.item2.complete(const Right(null));
     } else if ([IqStanzaType.ERROR, IqStanzaType.INVALID, IqStanzaType.TIMEOUT].contains(stanza.type)) {
       final errorElement = stanza.getChild("error");
       final int errorCode = int.tryParse(errorElement?.getAttribute("code")?.value ?? '') ?? 400;

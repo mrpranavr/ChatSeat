@@ -9,7 +9,7 @@ import 'package:onionchatflutter/xmpp/xmpp_stone.dart' as xmpp;
 
 
 class RegistrationViewModel {
-  Future<Either<ConnectionError, Either<RegistrationError, Void>>> register(
+  Future<Either<ConnectionError, Either<RegistrationError, Void?>>> register(
       final String username, final String password) async {
     final xmpp.XmppAccountSettings accountSettings = createAccountSettings();
     final xmpp.Connection connection = xmpp.Connection(accountSettings,
