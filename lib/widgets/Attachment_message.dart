@@ -87,9 +87,9 @@ class Attachment_message extends StatelessWidget {
               decoration: const BoxDecoration(
                 color: Color(0xffD9D6D6),
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(30),
-                  bottomLeft: Radius.circular(20),
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
                 ),
               ),
               child: GestureDetector(
