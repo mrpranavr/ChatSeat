@@ -25,5 +25,6 @@ extension ConnectionStateHelper on xmpp.Connection {
 
 class ConnectionError {
   final xmpp.XmppConnectionState state;
-  ConnectionError(this.state);
+  final String message;
+  ConnectionError(this.state, this.message);
 }

@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: scaffold_color,
         ),
         // Currently home is this one, After finished replace with LoginScreen()
-        home: ContactsScreen(),
+        home: LoginScreen(),
         routes: route,
       ),
     );

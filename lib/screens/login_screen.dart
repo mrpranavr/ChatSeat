@@ -136,12 +136,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     if (result.isLeft) {
                       final error = result.left;
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Failed with state: ${error.state}")));
+                          content: Text("Auth failed: ${error.message}")));
                     } else {
                       final connection = result.right;
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text(
-                              "Logged in as: ${connection.account.username} - with state: ${connection.state}")));
+                              "Logged in: ${connection.account.username}")));
                       connection.close();
                     }
                   },

@@ -23,8 +23,8 @@ class LoginViewModel {
     return Either.condLazy(
         terminalState == xmpp.XmppConnectionState.Authenticated,
         () {
-          connection.close();
-          return ConnectionError(terminalState);
+          if (connection.isOpened()) connection.close();
+          return ConnectionError(terminalState, connection.errorMessage ?? "");
         },
         () => connection);
   }

@@ -23,9 +23,12 @@ class RegistrationViewModel {
           xmpp.XmppConnectionState.SaslNegotiated,
         ]);
     if (terminalState != xmpp.XmppConnectionState.SaslNegotiated) {
-      return Left(ConnectionError(terminalState));
+      if (connection.isOpened()) connection.close();
+      return Left(ConnectionError(terminalState, connection.errorMessage ?? ""));
     }
     final RegistrationManager registrationManager = RegistrationManager.getInstance(connection);
-    return Right(await registrationManager.createAccount(username: username, password: password));
+    final result = await registrationManager.createAccount(username: username, password: password);
+    if (connection.isOpened()) connection.close();
+    return Right(result);
   }
 }
