@@ -130,7 +130,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    isLoggingIn = true;
+                    setState(() {
+                      isLoggingIn = true;
+                    });
                     final result = await loginViewModel.login(
                         _usernameController.text, _passwordController.text);
                     if (result.isLeft) {
@@ -144,6 +146,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               "Logged in: ${connection.account.username}")));
                       connection.close();
                     }
+                    setState(() {
+                      isLoggingIn = false;
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                       primary: Colors.transparent,

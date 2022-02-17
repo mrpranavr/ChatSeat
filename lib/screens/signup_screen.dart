@@ -11,7 +11,7 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  // bool isLoggingIn = false;
+  bool isSigningUp = false;
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _password_visible = false;
@@ -21,18 +21,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       body: GestureDetector(
         onTap: (() {
-          FocusScope.of(context).requestFocus(new FocusNode());
+          FocusScope.of(context).requestFocus(FocusNode());
         }),
         child: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.all(28),
+            padding: const EdgeInsets.all(28),
             width: double.infinity,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Replace the sized box with the logo or leave it like this
-                SizedBox(height: 150),
+                const SizedBox(height: 150),
                 Text(
                   'OnionChat',
                   style: TextStyle(
@@ -42,7 +42,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     foreground: Paint()..shader = headingGradient,
                   ),
                 ),
-                Text(
+                const Text(
                   'Enjoy true anonymity',
                   style: TextStyle(
                     fontFamily: FontFamily_main,
@@ -71,7 +71,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 TextField(
                   scrollPadding: EdgeInsets.only(
                       bottom: MediaQuery.of(context).viewInsets.bottom),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.transparent),
                       borderRadius: BorderRadius.all(
@@ -127,11 +127,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     hintText: 'Enter password',
-                    fillColor: Color(0xffE5E5E5),
+                    fillColor: const Color(0xffE5E5E5),
                     filled: true,
-                    focusedBorder: OutlineInputBorder(
+                    focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: text_field_color, width: 3),
-                      borderRadius: const BorderRadius.all(
+                      borderRadius: BorderRadius.all(
                         Radius.circular(20),
                       ),
                     ),
@@ -153,7 +153,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     decoration: BoxDecoration(
                         gradient: button_gradient,
                         borderRadius: BorderRadius.circular(20)),
-                    child: Container(
+                    child: const SizedBox(
                       width: double.infinity,
                       height: 55,
                       child: Center(
@@ -175,7 +175,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'Already have an account? ',
                       style: TextStyle(
                         fontFamily: FontFamily_main,
@@ -185,7 +185,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     GestureDetector(
-                      child: Text(
+                      child: const Text(
                         'Login here',
                         style: TextStyle(
                           fontFamily: FontFamily_main,
