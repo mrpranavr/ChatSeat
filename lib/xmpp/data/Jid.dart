@@ -52,9 +52,9 @@ class Jid {
   static Jid fromFullJid(String fullJid) {
     var exp = RegExp(r'^((.*?)@)?([^/@]+)(/(.*))?$');
     Iterable<Match> matches = exp.allMatches(fullJid);
-    var match = matches.first;
+    var match = matches.isNotEmpty ? matches.first : null;
     if (match != null) {
-      return Jid(match[2]!, match[3]!, match[5]!);
+      return Jid(match[2], match[3], match[5]);
     } else {
       return InvalidJid();
     }

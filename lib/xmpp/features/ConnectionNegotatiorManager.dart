@@ -30,10 +30,11 @@ class ConnectionNegotiatorManager {
 
   final Connection _connection;
   final XmppAccountSettings _accountSettings;
+  final SaslAuthenticationFeature Function(Connection, String) _authenticationFeatureFactory;
 
   StreamSubscription<NegotiatorState>? activeSubscription;
 
-  ConnectionNegotiatorManager(this._connection, this._accountSettings);
+  ConnectionNegotiatorManager(this._connection, this._accountSettings, this._authenticationFeatureFactory);
 
   void init() {
     supportedNegotiatorList.clear();
@@ -99,8 +100,7 @@ class ConnectionNegotiatorManager {
     var streamManagement = StreamManagementModule.getInstance(_connection);
     streamManagement.reset();
     supportedNegotiatorList.add(StartTlsNegotiator(_connection)); //priority 1
-    supportedNegotiatorList
-        .add(SaslAuthenticationFeature(_connection, _accountSettings.password));
+    supportedNegotiatorList.add(_authenticationFeatureFactory(_connection, _accountSettings.password));
     if (streamManagement.isResumeAvailable()) {
       supportedNegotiatorList.add(streamManagement);
     }
@@ -109,8 +109,7 @@ class ConnectionNegotiatorManager {
     supportedNegotiatorList
         .add(streamManagement); //doesn't care if success it will be done
     supportedNegotiatorList.add(SessionInitiationNegotiator(_connection));
-    // supportedNegotiatorList
-    //     .add(ServiceDiscoveryNegotiator.getInstance(_connection));
+    supportedNegotiatorList.add(ServiceDiscoveryNegotiator.getInstance(_connection));
     supportedNegotiatorList.add(CarbonsNegotiator.getInstance(_connection));
     supportedNegotiatorList.add(MAMNegotiator.getInstance(_connection));
 

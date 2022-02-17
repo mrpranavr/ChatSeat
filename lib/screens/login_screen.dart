@@ -3,7 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:onionchatflutter/constants.dart';
-import 'package:onionchatflutter/viewmodel/loginviewmodel.dart';
+import 'package:onionchatflutter/viewmodel/login_view_model.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/login';

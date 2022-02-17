@@ -22,7 +22,9 @@ class SaslAuthenticationFeature extends Negotiator {
     expectedName = 'SaslAuthenticationFeature';
   }
 
-  // improve this
+
+  Connection get connection => _connection;
+
   @override
   List<Nonza?> match(List<Nonza?> requests) {
     var nonza = requests.firstWhere((element) => element?.name == 'mechanisms', orElse: () => null);
@@ -34,6 +36,7 @@ class SaslAuthenticationFeature extends Negotiator {
     if (nonzas != null || nonzas.isNotEmpty) {
       _populateOfferedMechanism(nonzas[0]);
       _process();
+      _connection.saslNegotiated();
     }
   }
 

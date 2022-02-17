@@ -9,6 +9,7 @@ import 'package:onionchatflutter/xmpp/elements/nonzas/Nonza.dart';
 import 'package:onionchatflutter/xmpp/elements/stanzas/AbstractStanza.dart';
 import 'package:onionchatflutter/xmpp/extensions/ping/PingManager.dart';
 import 'package:onionchatflutter/xmpp/features/ConnectionNegotatiorManager.dart';
+import 'package:onionchatflutter/xmpp/features/sasl/SaslAuthenticationFeature.dart';
 import 'package:onionchatflutter/xmpp/features/streammanagement/StreamManagmentModule.dart';
 import 'package:onionchatflutter/xmpp/parser/StanzaParser.dart';
 import 'package:onionchatflutter/xmpp/presence/PresenceManager.dart';
@@ -27,6 +28,7 @@ enum XmppConnectionState {
   DoneParsingFeatures,
   StartTlsFailed,
   AuthenticationNotSupported,
+  SaslNegotiated,
   PlainAuthentication,
   Authenticating,
   Authenticated,
@@ -129,14 +131,15 @@ class Connection {
 
   ReconnectionManager? reconnectionManager;
 
-  Connection(this.account) {
+  Connection(this.account, {SaslAuthenticationFeature Function(Connection, String) authenticationFeature = _defaultAuthenticationFeature}) {
     RosterManager.getInstance(this);
     PresenceManager.getInstance(this);
     MessageHandler.getInstance(this);
     PingManager.getInstance(this);
-    connectionNegotatiorManager = ConnectionNegotiatorManager(this, account);
+    connectionNegotatiorManager = ConnectionNegotiatorManager(this, account, authenticationFeature);
     reconnectionManager = ReconnectionManager(this);
   }
+  static SaslAuthenticationFeature _defaultAuthenticationFeature(Connection connection, String password) => SaslAuthenticationFeature(connection, password);
 
   void _openStream() {
     var streamOpeningString = """
@@ -419,6 +422,10 @@ xml:lang='en'
 
   void authenticating() {
     setState(XmppConnectionState.Authenticating);
+  }
+
+  void saslNegotiated() {
+    setState(XmppConnectionState.SaslNegotiated);
   }
 
   bool _validateBadCertificate(X509Certificate certificate) {
