@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:onionchatflutter/Modals/chat_info.dart';
 import 'package:onionchatflutter/Modals/messages.dart';
 import 'package:onionchatflutter/constants.dart';
-import 'package:onionchatflutter/routes.dart';
 import 'package:onionchatflutter/screens/login_screen.dart';
 import 'package:onionchatflutter/screens/post_authentication_screen.dart';
 import 'package:onionchatflutter/screens/signup_screen.dart';

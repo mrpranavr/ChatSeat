@@ -21,7 +21,7 @@ class PostAuthenticationScreen extends StatelessWidget {
         initialRoute: '/',
         onGenerateRoute: (settings) {
           switch (settings.name) {
-            case 'chat':
+            case '/chat':
               return PageRouteBuilder(
                   pageBuilder: (context, a, b) => const ChatScreen()
               );
