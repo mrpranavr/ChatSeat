@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:onionchatflutter/Modals/chat_info.dart';
+import 'package:onionchatflutter/model/chat_info.dart';
 import 'package:onionchatflutter/constants.dart';
 import 'package:onionchatflutter/widgets/nav_drawer.dart';
 import 'package:provider/provider.dart';
