@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:onionchatflutter/constants.dart';
 
-class Nav_drawer extends StatefulWidget {
+class NavDrawer extends StatefulWidget {
   // The current user's name should be passes into this widget
 
-  const Nav_drawer({
+  const NavDrawer({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<Nav_drawer> createState() => _Nav_drawerState();
+  State<NavDrawer> createState() => _NavDrawerState();
 }
 
-class _Nav_drawerState extends State<Nav_drawer> {
+class _NavDrawerState extends State<NavDrawer> {
   // Implement a function to change the profile photo of the user
   // and also the QR buttons and LogOut button
 

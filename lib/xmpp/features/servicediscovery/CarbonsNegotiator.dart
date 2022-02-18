@@ -53,7 +53,7 @@ class CarbonsNegotiator extends Negotiator {
     if (match(nonzas).isNotEmpty) {
       state = NegotiatorState.NEGOTIATING;
       sendRequest();
-      _subscription= _connection.inStanzasStream.listen(checkStanzas);
+      _subscription = _connection.inStanzasStream.listen(checkStanzas);
     }
   }
 

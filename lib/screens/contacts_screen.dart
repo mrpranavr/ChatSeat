@@ -19,7 +19,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Nav_drawer(),
+      drawer: NavDrawer(),
       body: Container(
         padding: EdgeInsets.fromLTRB(15, 40, 15, 10),
         child: Column(
@@ -74,7 +74,6 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     },
                   );
                 }),
-                // child:
               ),
             ),
           ],

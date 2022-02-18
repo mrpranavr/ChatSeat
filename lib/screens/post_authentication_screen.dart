@@ -18,14 +18,14 @@ class PostAuthenticationScreen extends StatelessWidget {
       providers: [Provider(create: (_) => _connection)],
       child: Navigator(
         key: PostAuthenticationScreen.navigatorKey,
-        initialRoute: '/',
+        initialRoute: ContactsScreen.routeName,
         onGenerateRoute: (settings) {
           switch (settings.name) {
-            case '/chat':
+            case ChatScreen.routeName:
               return PageRouteBuilder(
                   pageBuilder: (context, a, b) => const ChatScreen()
               );
-            case '/':
+            case ContactsScreen.routeName:
             default:
               return PageRouteBuilder(
                   pageBuilder: (context, a, b) => const ContactsScreen()
