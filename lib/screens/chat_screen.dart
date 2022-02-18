@@ -46,7 +46,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final arg = ModalRoute.of(context)!.settings.arguments as Map;
+    final arg = ModalRoute.of(context)!.settings.arguments as ChatScreenArguments;
     return Scaffold(
       backgroundColor: const Color(0xffF7ECF8),
       body: GestureDetector(
@@ -71,14 +71,14 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   CircleAvatar(
                     radius: 30,
-                    foregroundImage: AssetImage(arg['imageUrl']),
+                    foregroundImage: AssetImage(arg.imageUrl),
                   ),
                   const SizedBox(
                     width: 20,
                   ),
                   Expanded(
                     child: Text(
-                      arg['name'],
+                      arg.name,
                       style: const TextStyle(
                         fontFamily: FontFamily_main,
                         fontSize: 20,
@@ -240,4 +240,11 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
+}
+
+class ChatScreenArguments {
+  final String imageUrl;
+  final String name;
+
+  ChatScreenArguments(this.imageUrl, this.name);
 }

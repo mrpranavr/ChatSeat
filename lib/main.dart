@@ -3,8 +3,10 @@ import 'package:onionchatflutter/Modals/chat_info.dart';
 import 'package:onionchatflutter/Modals/messages.dart';
 import 'package:onionchatflutter/constants.dart';
 import 'package:onionchatflutter/routes.dart';
-import 'package:onionchatflutter/screens/contacts_screen.dart';
 import 'package:onionchatflutter/screens/login_screen.dart';
+import 'package:onionchatflutter/screens/post_authentication_screen.dart';
+import 'package:onionchatflutter/screens/signup_screen.dart';
+import 'package:onionchatflutter/xmpp/xmpp_stone.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -12,9 +14,11 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  static final navigationKey = GlobalKey<NavigatorState>(debugLabel: "base-navigator");
+
   const MyApp({Key? key}) : super(key: key);
 
-  @override
+ @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
@@ -26,6 +30,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        navigatorKey: MyApp.navigationKey,
         debugShowCheckedModeBanner: false,
         title: 'OnionChat',
         theme: ThemeData(
@@ -33,9 +38,26 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: scaffold_color,
         ),
         // Currently home is this one, After finished replace with LoginScreen()
-        home: LoginScreen(),
-        routes: route,
+        initialRoute: LoginScreen.routeName,
+        onGenerateRoute: (settings) {
+          switch (settings.name) {
+            case LoginScreen.routeName:
+              return PageRouteBuilder(pageBuilder: (context, a, b) => LoginScreen());
+            case SignUpScreen.routeName:
+              return PageRouteBuilder(pageBuilder: (context, a, b) => SignUpScreen());
+            case PostAuthenticationScreen.routeName:
+              final AuthenticatedArguments arguments = settings.arguments as AuthenticatedArguments;
+              return PageRouteBuilder(pageBuilder: (context, a, b) => PostAuthenticationScreen(arguments.connection));
+          }
+        },
       ),
     );
   }
+}
+
+class AuthenticatedArguments {
+  final Connection connection;
+
+  AuthenticatedArguments(this.connection);
+
 }

@@ -12,6 +12,6 @@ const Map<String, WidgetBuilder> route = {
 };
 
 Widget _routeLogin(final BuildContext context) => LoginScreen();
-Widget _routeSignUp(final BuildContext context) => SignUpScreen();
+Widget _routeSignUp(final BuildContext context) => const SignUpScreen();
 Widget _routeContacts(final BuildContext context) => ContactsScreen();
 Widget _routeChats(final BuildContext context) => ChatScreen();
