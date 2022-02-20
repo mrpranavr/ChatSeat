@@ -15,7 +15,7 @@ const colLocalPath = 'local_path';
 
 // Queries
 const createQuery = '''
-create table $tableName if not exists (
+create table if not exists $tableName (
     $colId integer primary key,
     $colType smallint not null,
     $colFrom text not null,

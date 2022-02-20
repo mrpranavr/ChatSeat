@@ -14,7 +14,7 @@ const vColUnreadCount = 'unread_count';
 
 // Queries
 const createQuery = '''
-create table $tableName if not exists (
+create table if not exists $tableName (
     $colId integer primary key,
     $colName text not null,
     $colAvatarFilePath text,
@@ -23,7 +23,7 @@ create table $tableName if not exists (
 ''';
 
 const createViewQuery = '''
-create view $viewName
+create view if not exists $viewName
 as
 select 
     $colId, 
