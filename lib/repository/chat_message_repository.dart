@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 class ChatMessageRepository {
   final Database database;
 
-  ChatMessageRepository(this.database);
+  ChatMessageRepository._from(this.database);
 
   Future<Message> insert(Message message) async {
     message.id = await database.insert(messages_table.tableName, message.toMap());

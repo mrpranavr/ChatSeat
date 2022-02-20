@@ -9,6 +9,9 @@ const colName = 'name';
 const colAvatarFilePath = 'avatar_file';
 const colLastViewedTimeStamp = 'last_viewed_time_millis';
 
+const vColLastMessage = 'last_message';
+const vColUnreadCount = 'unread_count';
+
 // Queries
 const createQuery = '''
 create table $tableName if not exists (
@@ -27,8 +30,8 @@ select
     $colName, 
     $colAvatarFilePath, 
     $colLastViewedTimeStamp, 
-    ${messages_table.tableName}.${messages_table.colBody}, 
-    unread_counter.unread
+    ${messages_table.tableName}.${messages_table.colBody} as $vColLastMessage, 
+    unread_counter.unread as $vColUnreadCount
 from
     $tableName
 inner join ${messages_table.tableName} on $tableName.$colId = ${messages_table.tableName}.${messages_table.colChannel}
