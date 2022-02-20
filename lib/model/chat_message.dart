@@ -1,11 +1,14 @@
+import 'package:onionchatflutter/repository/messages_table.dart' as messages_table;
+
 abstract class Message {
-  final int? id;
+  int? id;
   final MessageType type;
   final String from;
   final String channelName;
   final int timestamp;
 
   Message(this.id, this.type, this.from, this.channelName, this.timestamp);
+
 }
 
 enum MessageType {

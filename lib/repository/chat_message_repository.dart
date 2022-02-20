@@ -1,4 +1,6 @@
 import 'package:onionchatflutter/model/chat_message.dart';
+import 'package:onionchatflutter/repository/messages_table.dart' as messages_table;
+
 import 'package:sqflite/sqflite.dart';
 
 class ChatMessageRepository {
@@ -6,8 +8,8 @@ class ChatMessageRepository {
 
   ChatMessageRepository(this.database);
 
-  Future<Message> insert(Message todo) async {
-    todo.id = await database.insert(tableTodo, todo.toMap());
+  Future<Message> insert(Message message) async {
+    message.id = await database.insert(messages_table.tableName, message.toMap());
     return todo;
   }
 
