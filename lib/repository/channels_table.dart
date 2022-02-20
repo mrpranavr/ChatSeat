@@ -23,7 +23,7 @@ create table $tableName if not exists (
 ''';
 
 const createViewQuery = '''
-create view ch_view
+create view $viewName
 as
 select 
     $colId, 
@@ -47,6 +47,7 @@ inner join (
         ${messages_table.tableName}.${messages_table.colTimestamp} > $tableName.$colLastViewedTimeStamp
     group by $tableName.$colId
 ) as unread_counter on $tableName.$colId = unread_counter.channel
-group by $tableName.$colId;
+group by $tableName.$colId
+order by $colLastViewedTimeStamp desc;
 ''';
 
