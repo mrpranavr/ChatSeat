@@ -26,7 +26,7 @@ create table $tableName if not exists (
     $colFileName text,
     $colFileSize integer,
     $colLocalPath text,
-    check ((id = 0 and body is not null) or (url != null and file_name != null, file_size != null))
+    check (($colType = 0 and $colBody is not null) or ($colUrl is not null and $colFileName is not null, $colFileSize is not null))
   )
 ''';
 
