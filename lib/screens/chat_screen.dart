@@ -9,13 +9,11 @@ import 'package:provider/provider.dart';
 
 class ChatScreen extends StatefulWidget {
   static const routeName = '/ChatScreen';
-  // final String name;
-  // final String imageUrl;
+  final ChatScreenArguments chatScreenArguments;
 
   const ChatScreen({
     Key? key,
-    // required this.name,
-    // required this.imageUrl,
+    required this.chatScreenArguments
   }) : super(key: key);
 
   @override
@@ -88,12 +86,12 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               ),
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
                   width: double.infinity,
                   // height: 750,
                   decoration: BoxDecoration(
@@ -243,8 +241,9 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 class ChatScreenArguments {
+  final String channelId;
   final String imageUrl;
   final String name;
 
-  ChatScreenArguments(this.imageUrl, this.name);
+  ChatScreenArguments(this.channelId, this.imageUrl, this.name);
 }

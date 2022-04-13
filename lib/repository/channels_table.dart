@@ -3,8 +3,21 @@ import 'package:onionchatflutter/repository/messages_table.dart' as messages_tab
 const tableName = 'channels';
 const viewName = 'ch_view';
 
+const columns = [
+  colName,
+  colAvatarFilePath,
+  colLastViewedTimeStamp
+];
+
+const viewColumns = [
+  colName,
+  colAvatarFilePath,
+  colLastViewedTimeStamp,
+  vColLastMessage,
+  vColUnreadCount
+];
+
 // Column Names
-const colId = 'id';
 const colName = 'name';
 const colAvatarFilePath = 'avatar_file';
 const colLastViewedTimeStamp = 'last_viewed_time_millis';
@@ -15,8 +28,7 @@ const vColUnreadCount = 'unread_count';
 // Queries
 const createQuery = '''
 create table if not exists $tableName (
-    $colId integer primary key,
-    $colName text not null,
+    $colName text not null primary key,
     $colAvatarFilePath text,
     $colLastViewedTimeStamp integer not null
 )
@@ -26,7 +38,6 @@ const createViewQuery = '''
 create view if not exists $viewName
 as
 select 
-    $colId, 
     $colName, 
     $colAvatarFilePath, 
     $colLastViewedTimeStamp, 
@@ -34,20 +45,20 @@ select
     unread_counter.unread as $vColUnreadCount
 from
     $tableName
-inner join ${messages_table.tableName} on $tableName.$colId = ${messages_table.tableName}.${messages_table.colChannel}
+inner join ${messages_table.tableName} on $tableName.$colName = ${messages_table.tableName}.${messages_table.colChannelName}
 inner join (
     select 
-       $tableName.$colId as channel, 
+       $tableName.$colName as channel, 
        count(${messages_table.tableName}.${messages_table.colId}) as unread
     from 
-        ${messages_table.tableName}.${messages_table.tableName} 
+        ${messages_table.tableName} 
     inner join $tableName on 
-            $tableName.$colId = ${messages_table.tableName}.${messages_table.colChannel}
+            $tableName.$colName = ${messages_table.tableName}.${messages_table.colChannelName}
     where 
         ${messages_table.tableName}.${messages_table.colTimestamp} > $tableName.$colLastViewedTimeStamp
-    group by $tableName.$colId
-) as unread_counter on $tableName.$colId = unread_counter.channel
-group by $tableName.$colId
+    group by $tableName.$colName
+) as unread_counter on $tableName.$colName = unread_counter.channel
+group by $tableName.$colName
 order by $colLastViewedTimeStamp desc;
 ''';
 
