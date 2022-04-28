@@ -1,58 +1,64 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:onionchatflutter/model/messages.dart';
 import 'package:onionchatflutter/constants.dart';
+import 'package:onionchatflutter/model/messages.dart';
+import 'package:onionchatflutter/viewmodel/messenger_bloc.dart';
 import 'package:onionchatflutter/widgets/attachment_message.dart';
-import 'package:onionchatflutter/widgets/normal_message.dart';
 import 'package:onionchatflutter/widgets/audio_message.dart';
+import 'package:onionchatflutter/widgets/normal_message.dart';
 import 'package:provider/provider.dart';
+
+import '../model/chat_message.dart';
 
 class ChatScreen extends StatefulWidget {
   static const routeName = '/ChatScreen';
   final ChatScreenArguments chatScreenArguments;
 
-  const ChatScreen({
-    Key? key,
-    required this.chatScreenArguments
-  }) : super(key: key);
+  const ChatScreen({Key? key, required this.chatScreenArguments})
+      : super(key: key);
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final DateFormat _format = DateFormat("dd-MM-yyyy HH:mm:ss a");
   final _messageController = TextEditingController();
+  final _scrollController = ScrollController();
+  StreamSubscription? _subscription;
+  @override
+  void initState() {
+    BlocProvider.of<MessengerBloc>(context).add(MessengerInitEvent());
+    _subscription = BlocProvider.of<MessengerBloc>(context).stream.listen((state) {
+      if (state is LoadedMessengerState) {
+       _scrollJumpDown();
+      }
+    });
 
-  Messages formatMessage(String message) {
-    String time = DateFormat.yMMMd().add_jm().format(DateTime.now());
-    String type = 'normal';
-    String sendType = 'sent';
-    return Messages(
-        type: type,
-        sendType: sendType,
-        message: message,
-        time: time,
-        attachmentUrl: '');
+    super.initState();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
+    _subscription?.cancel();
+    _scrollController.dispose();
     _messageController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final arg = ModalRoute.of(context)!.settings.arguments as ChatScreenArguments;
     return Scaffold(
       backgroundColor: const Color(0xffF7ECF8),
       body: GestureDetector(
         onTap: (() {
-          FocusScope.of(context).requestFocus(new FocusNode());
+          FocusScope.of(context).requestFocus(FocusNode());
         }),
         child: Container(
-          padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
+          padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
           child: Column(
             children: [
               Row(
@@ -69,14 +75,14 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   CircleAvatar(
                     radius: 30,
-                    foregroundImage: AssetImage(arg.imageUrl),
+                    foregroundImage: AssetImage(widget.chatScreenArguments.imageUrl),
                   ),
                   const SizedBox(
                     width: 20,
                   ),
                   Expanded(
                     child: Text(
-                      arg.name,
+                      widget.chatScreenArguments.name,
                       style: const TextStyle(
                         fontFamily: FontFamily_main,
                         fontSize: 20,
@@ -105,54 +111,64 @@ class _ChatScreenState extends State<ChatScreen> {
                         color: Colors.grey.withOpacity(0.5),
                         spreadRadius: 8,
                         blurRadius: 16,
-                        offset: Offset(0, -5), // changes position of shadow
+                        offset: const Offset(0, -5), // changes position of shadow
                       ),
                     ],
                   ),
                   child: Column(
                     children: [
                       Expanded(
-                        child: Consumer<ChatMessage>(
-                            builder: (context, Messages, index) {
-                          return ListView.builder(
-                            // controller: _controller,
-                            reverse: true,
-                            itemCount: Messages.SpoofMessages.length,
-                            itemBuilder: (context, index) {
-                              final reversedIndex =
-                                  Messages.SpoofMessages.length - 1 - index;
-                              String message =
-                                  Messages.SpoofMessages[reversedIndex].message;
-                              String time =
-                                  Messages.SpoofMessages[reversedIndex].time;
-                              String sendType = Messages
-                                  .SpoofMessages[reversedIndex].sendType;
-                              String type =
-                                  Messages.SpoofMessages[reversedIndex].type;
-                              String attachmentUrl = Messages
-                                  .SpoofMessages[reversedIndex].attachmentUrl;
-                              if (type == 'recording') {
-                                return AudioMessage();
-                              } else if (type == 'attachment') {
-                                return Attachment_message(
-                                  sendType: sendType,
-                                  url: attachmentUrl,
-                                  time: time,
-                                );
-                              } else {
-                                return Normal_message(
-                                  sendType: sendType,
-                                  message: message,
-                                  time: time,
-                                );
-                              }
-                            },
-                          );
-                        }
-                            // child:
-                            ),
+                        child: BlocBuilder<MessengerBloc, MessengerState>(
+                          builder: (context, bloc) {
+                            if (bloc is LoadingMessengerState) {
+                              return const CircularProgressIndicator();
+                            } else if (bloc is ErrorMessengerState) {
+                              return const Text("Error");
+                            } else if (bloc is LoadedMessengerState) {
+                              return ListView.builder(
+                                controller: _scrollController,
+                                itemCount: bloc.messages.length + (bloc.completedLoading ? 0 : 1),
+                                reverse: false,
+                                itemBuilder: (context, index) {
+                                  final actualIndex = index - (bloc.completedLoading ? 0 : 1);
+                                  if (index == 0 && actualIndex == -1) {
+                                    return Container(
+                                      alignment: Alignment.center,
+                                      child: const CircularProgressIndicator(),
+                                    );
+                                  }
+                                  final Message msg = bloc.messages[actualIndex];
+                                  switch (msg.type) {
+                                    case MessageType.TEXT:
+                                      return Normal_message(
+                                          sendType: msg.from == widget.chatScreenArguments.selfUserId ? "sent" : "received",
+                                          message: (msg as TextMessage).message,
+                                          time: _format.format(DateTime.fromMillisecondsSinceEpoch(msg.timestamp))
+                                      );
+
+                                    case MessageType.FILE:
+                                      return Attachment_message(
+                                          sendType: msg.from == widget.chatScreenArguments.selfUserId ? "sent" : "received",
+                                        url: (msg as DownloadableMessage).url,
+                                        time: _format.format(DateTime.fromMillisecondsSinceEpoch(msg.timestamp))
+                                      );
+                                    case MessageType.IMAGE:
+                                      return Attachment_message(
+                                          sendType: msg.from == widget.chatScreenArguments.selfUserId ? "sent" : "received",
+                                          url: (msg as DownloadableMessage).url,
+                                          time: _format.format(DateTime.fromMillisecondsSinceEpoch(msg.timestamp))
+                                      );
+                                    case MessageType.AUDIO:
+                                      return const AudioMessage();
+                                  }
+                                },
+                              );
+                            }
+                            return const Text("...");
+                          },
+                        ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Row(
@@ -214,11 +230,13 @@ class _ChatScreenState extends State<ChatScreen> {
                                   _messageController.text.trim().isEmpty) {
                                 return;
                               } else {
-                                print('message sent');
-
-                                Provider.of<ChatMessage>(context, listen: false)
-                                    .sentMessage(
-                                        formatMessage(_messageController.text));
+                                final bloc = BlocProvider.of<MessengerBloc>(context);
+                                bloc.add(MessageSendEvent(TextMessage(
+                                  from: widget.chatScreenArguments.selfUserId,
+                                  channelName: widget.chatScreenArguments.channelId,
+                                  timestamp: DateTime.now().millisecondsSinceEpoch,
+                                  message: _messageController.text.trim()
+                                )));
                                 setState(() {
                                   _messageController.clear();
                                 });
@@ -238,12 +256,60 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
+
+  void _scrollJumpDown() {
+    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+  }
 }
 
 class ChatScreenArguments {
+  final String selfUserId;
   final String channelId;
   final String imageUrl;
   final String name;
 
-  ChatScreenArguments(this.channelId, this.imageUrl, this.name);
+  ChatScreenArguments(this.channelId, this.imageUrl, this.name, this.selfUserId);
 }
+
+/*
+* Consumer<ChatMessage>(
+                            builder: (context, Messages, index) {
+                          return ListView.builder(
+                            // controller: _controller,
+                            reverse: true,
+                            itemCount: Messages.SpoofMessages.length,
+                            itemBuilder: (context, index) {
+                              final reversedIndex =
+                                  Messages.SpoofMessages.length - 1 - index;
+                              String message =
+                                  Messages.SpoofMessages[reversedIndex].message;
+                              String time =
+                                  Messages.SpoofMessages[reversedIndex].time;
+                              String sendType = Messages
+                                  .SpoofMessages[reversedIndex].sendType;
+                              String type =
+                                  Messages.SpoofMessages[reversedIndex].type;
+                              String attachmentUrl = Messages
+                                  .SpoofMessages[reversedIndex].attachmentUrl;
+                              if (type == 'recording') {
+                                return AudioMessage();
+                              } else if (type == 'attachment') {
+                                return Attachment_message(
+                                  sendType: sendType,
+                                  url: attachmentUrl,
+                                  time: time,
+                                );
+                              } else {
+                                return Normal_message(
+                                  sendType: sendType,
+                                  message: message,
+                                  time: time,
+                                );
+                              }
+                            },
+                          );
+                        }
+                            // child:
+                            )
+*
+* */

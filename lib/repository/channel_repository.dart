@@ -15,6 +15,19 @@ class ChannelRepository {
     return channel;
   }
 
+  Future<List<ChatChannel>> fetchChannels(int offset, int limit) async {
+    List<Map<String, Object?>> maps = await database.query(
+        channels_table.viewName,
+        columns: channels_table.viewColumns,
+        limit: limit,
+        offset: offset,
+    );
+    if (maps.isNotEmpty) {
+      return maps.map((e) => ChatChannel.fromViewMap(e)).toList();
+    }
+    return [];
+  }
+
   Future<ChatChannel?> getChannel(String name) async {
     List<Map<String, Object?>> maps = await database.query(
         channels_table.viewName,

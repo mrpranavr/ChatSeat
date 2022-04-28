@@ -3,6 +3,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:onionchatflutter/constants.dart';
+import 'package:onionchatflutter/main.dart';
+import 'package:onionchatflutter/screens/post_authentication_screen.dart';
 import 'package:onionchatflutter/viewmodel/login_view_model.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -145,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text(
                               "Logged in: ${connection.account.username}")));
-                      connection.close();
+                      Navigator.of(context).pushNamedAndRemoveUntil(PostAuthenticationScreen.routeName, (Route<dynamic> route) => false, arguments: AuthenticatedArguments(connection));
                     }
                     setState(() {
                       isLoggingIn = false;

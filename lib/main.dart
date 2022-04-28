@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:onionchatflutter/model/chat_info.dart';
 import 'package:onionchatflutter/model/messages.dart';
 import 'package:onionchatflutter/constants.dart';
 import 'package:onionchatflutter/screens/login_screen.dart';
 import 'package:onionchatflutter/screens/post_authentication_screen.dart';
 import 'package:onionchatflutter/screens/signup_screen.dart';
+import 'package:onionchatflutter/viewmodel/post_authentication_cubit.dart';
 import 'package:onionchatflutter/xmpp/xmpp_stone.dart';
 import 'package:provider/provider.dart';
 
@@ -36,17 +38,21 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           scaffoldBackgroundColor: scaffold_color,
         ),
-        // Currently home is this one, After finished replace with LoginScreen()
         initialRoute: LoginScreen.routeName,
         onGenerateRoute: (settings) {
           switch (settings.name) {
             case LoginScreen.routeName:
               return PageRouteBuilder(pageBuilder: (context, a, b) => LoginScreen());
             case SignUpScreen.routeName:
-              return PageRouteBuilder(pageBuilder: (context, a, b) => SignUpScreen());
+              return PageRouteBuilder(pageBuilder: (context, a, b) => const SignUpScreen());
             case PostAuthenticationScreen.routeName:
               final AuthenticatedArguments arguments = settings.arguments as AuthenticatedArguments;
-              return PageRouteBuilder(pageBuilder: (context, a, b) => PostAuthenticationScreen(arguments.connection));
+              return PageRouteBuilder(pageBuilder: (context, a, b) {
+                return BlocProvider(
+                  create: (ctx) => PostAuthenticationCubit(InitialState(), arguments.connection),
+                  child: PostAuthenticationScreen(username: arguments.connection.account.fullJid.local ?? "Unknown"),
+                );
+              });
           }
         },
       ),

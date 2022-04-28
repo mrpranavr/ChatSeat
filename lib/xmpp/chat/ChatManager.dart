@@ -16,7 +16,6 @@ class ChatManager {
       manager = ChatManager(connection);
       instances[connection] = manager;
     }
-
     return manager;
   }
 

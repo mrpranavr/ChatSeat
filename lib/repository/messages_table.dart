@@ -1,7 +1,7 @@
 import './channels_table.dart' as channels_table;
 
 const tableName = 'messages';
-const viewName = 'msg_view';
+//const viewName = 'msg_view';
 // Column Names
 const colId = 'id';
 const colType = 'type';
@@ -45,7 +45,7 @@ const columns = [
 // Queries
 const createQuery = '''
 create table if not exists $tableName (
-    $colId integer primary key,
+    $colId integer primary key autoincrement,
     $colType smallint not null,
     $colFrom text not null,
     $colChannelName text not null references ${channels_table.tableName}(${channels_table.colName}),
@@ -54,11 +54,10 @@ create table if not exists $tableName (
     $colUrl text,
     $colFileName text,
     $colFileSize integer,
-    $colLocalPath text,
-    check (($colType = 0 and $colBody is not null) or ($colUrl is not null and $colFileName is not null, $colFileSize is not null))
+    $colLocalPath text
 )
 ''';
-
+//     check (($colType = 0 and $colBody is not null) or ($colUrl is not null and $colFileName is not null, $colFileSize is not null))
 /*
 const createViewQuery = '''
 create view if not exists $viewName

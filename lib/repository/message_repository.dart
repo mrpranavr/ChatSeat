@@ -28,12 +28,15 @@ class MessageRepository {
     return null;
   }
 
-  Future<List<Message>> getMessagesFromChannel(int channelId) async {
+  Future<List<Message>> getMessagesFromChannel({required String channelId, int? limit, int? offset}) async {
     List<Map<String, Object?>> maps = await database.query(
         messages_table.tableName,
         columns: messages_table.columns,
         where: '${messages_table.colChannelName} = ?',
-        whereArgs: [channelId]
+        whereArgs: [channelId],
+        limit: limit,
+        offset: offset,
+        orderBy: messages_table.colTimestamp + " DESC",
     );
     return maps.map((e) => Message.fromMap(e)).toList();
   }

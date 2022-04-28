@@ -1,40 +1,77 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:onionchatflutter/screens/chat_screen.dart';
 import 'package:onionchatflutter/screens/contacts_screen.dart';
-import 'package:onionchatflutter/xmpp/xmpp_stone.dart';
-import 'package:provider/provider.dart';
+import 'package:onionchatflutter/viewmodel/channels_bloc.dart';
+import 'package:onionchatflutter/viewmodel/messenger_bloc.dart';
+import 'package:onionchatflutter/viewmodel/post_authentication_cubit.dart';
 
-class PostAuthenticationScreen extends StatelessWidget {
+class PostAuthenticationScreen extends StatefulWidget {
   static const routeName = "/authenticated";
   static const navigatorKey = Key("post-auth-nav");
-  final Connection _connection;
+  final String username;
 
-  const PostAuthenticationScreen(this._connection, {Key? key})
-      : super(key: key);
+  const PostAuthenticationScreen({Key? key, required this.username}) : super(key: key);
 
   @override
-  Widget build(final BuildContext context) {
-    return MultiProvider(
-      providers: [Provider(create: (_) => _connection)],
-      child: Navigator(
-        key: PostAuthenticationScreen.navigatorKey,
-        initialRoute: ContactsScreen.routeName,
-        onGenerateRoute: (settings) {
-          final arg = settings.arguments;
-          switch (settings.name) {
-            case ChatScreen.routeName:
-              return PageRouteBuilder(
-                  pageBuilder: (context, a, b) => ChatScreen(chatScreenArguments: arg as ChatScreenArguments)
-              );
-            case ContactsScreen.routeName:
-            default:
-              return PageRouteBuilder(
-                  pageBuilder: (context, a, b) => const ContactsScreen()
-              );
+  State<StatefulWidget> createState() {
+    return _PostAuthenticationScreenState();
+  }
+
+}
+
+class _PostAuthenticationScreenState extends State<PostAuthenticationScreen> {
+  @override
+  void initState() {
+    BlocProvider.of<PostAuthenticationCubit>(context).initialize(widget.username);
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<PostAuthenticationCubit, PostAuthenticationState> (
+        builder: (ctx, bloc) {
+          if (bloc is ReadyState) {
+            return Navigator(
+              key: PostAuthenticationScreen.navigatorKey,
+              initialRoute: ContactsScreen.routeName,
+              onGenerateRoute: (settings) {
+                switch (settings.name) {
+                  case ChatScreen.routeName:
+                    final chatArgs = settings.arguments as ChatScreenArguments;
+                    return PageRouteBuilder(
+                        pageBuilder: (context, a, b) => BlocProvider(
+                          create: (ctx) => MessengerBloc(bloc.messenger, chatArgs.channelId),
+                          child: ChatScreen(chatScreenArguments: chatArgs),
+                        )
+                    );
+                  case ContactsScreen.routeName:
+                  default:
+                    return PageRouteBuilder(
+                        pageBuilder: (context, a, b) => BlocProvider(
+                            create: (ctx) => ChannelsBloc(bloc.messenger),
+                          child: ContactsScreen(selfUserId: bloc.messenger.username),
+                        )
+                    );
+                }
+              },
+            );
           }
-        },
-      ),
+          return const CircularProgressIndicator();
+        }
     );
+  }
+
+  @override
+  void dispose() {
+    final cubit = BlocProvider.of<PostAuthenticationCubit>(context);
+    final state = cubit.state;
+    if (state is ReadyState) {
+      state.messenger.dispose();
+    }
+    super.dispose();
   }
 
 }

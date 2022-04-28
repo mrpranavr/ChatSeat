@@ -1,18 +1,18 @@
 import 'package:onionchatflutter/xmpp/xmpp_stone.dart' as xmpp;
 
-const _domain = 'dedf54xrpkdkekxc36ky4kofo6yq5gdndevh3mrpjlvdmcafsfsw2mqd.onion';
-const _port = 5222;
-const _resource = 'OnionChat';
-const _host = '79.110.52.158';
+const domain = 'dedf54xrpkdkekxc36ky4kofo6yq5gdndevh3mrpjlvdmcafsfsw2mqd.onion';
+const port = 5222;
+const resource = 'OnionChat';
+const host = '79.110.52.158';
 
 xmpp.XmppAccountSettings createAccountSettings({String username = "", String password = ""}) => xmpp.XmppAccountSettings(
-  "$username@$_domain",
+  "$username@$domain",
   username,
-  _domain,
+  domain,
   password,
-  _port,
-  resource: _resource,
-  host: _host,
+  port,
+  resource: resource,
+  host: host,
 );
 
 extension ConnectionStateHelper on xmpp.Connection {
@@ -22,6 +22,13 @@ extension ConnectionStateHelper on xmpp.Connection {
         .first;
   }
 }
+
+extension JidTransformer on String {
+  xmpp.Jid toJid() {
+    return xmpp.Jid(this, domain, resource);
+  }
+}
+
 
 class ConnectionError {
   final xmpp.XmppConnectionState state;

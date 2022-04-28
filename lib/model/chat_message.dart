@@ -14,7 +14,7 @@ abstract class Message {
   Map<String, Object> toMap();
 
   static Message fromMap(final Map<String, Object?> map) {
-    switch(map[messages_table.colType]) {
+    switch(MessageType.values[map[messages_table.colType] as int]) {
       case MessageType.TEXT:
         return TextMessage(
             id: map[messages_table.colId] as int?,
@@ -44,6 +44,33 @@ enum MessageType {
   IMAGE,
   AUDIO
 }
+
+MessageType migrateFromAndroidNaming(final String androidName) {
+  switch (androidName) {
+    case "IMAGE":
+      return MessageType.IMAGE;
+    case "AUDIO":
+      return MessageType.AUDIO;
+    case "FILE":
+      return MessageType.FILE;
+    default:
+      return  MessageType.TEXT;
+  }
+}
+
+String migrateToAndroidNaming(final MessageType type) {
+  switch (type) {
+    case MessageType.IMAGE:
+      return "IMAGE";
+    case MessageType.AUDIO:
+      return "AUDIO";
+    case MessageType.FILE:
+      return "FILE";
+    default:
+      return  "TEXT";
+  }
+}
+
 
 class TextMessage extends Message {
   final String message;
