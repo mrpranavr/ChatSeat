@@ -1,17 +1,15 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:onionchatflutter/constants.dart';
-import 'package:onionchatflutter/model/messages.dart';
 import 'package:onionchatflutter/viewmodel/messenger_bloc.dart';
 import 'package:onionchatflutter/widgets/attachment_message.dart';
 import 'package:onionchatflutter/widgets/audio_message.dart';
 import 'package:onionchatflutter/widgets/image_message.dart';
 import 'package:onionchatflutter/widgets/normal_message.dart';
-import 'package:provider/provider.dart';
-
 import '../model/chat_message.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -33,12 +31,11 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     BlocProvider.of<MessengerBloc>(context).add(MessengerInitEvent());
-    _subscription =
-        BlocProvider.of<MessengerBloc>(context).stream.listen((state) {
-      if (state is LoadedMessengerState) {
-        _scrollJumpDown();
-      }
-    });
+    // _subscription = BlocProvider.of<MessengerBloc>(context).stream.listen((state) {
+    //   if (mounted && state is LoadedMessengerState) {
+    //    _scrollJumpDown();
+    //   }
+    // });
 
     super.initState();
   }
@@ -46,7 +43,6 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void dispose() {
     super.dispose();
-    _subscription?.cancel();
     _scrollController.dispose();
     _messageController.dispose();
   }
@@ -123,28 +119,28 @@ class _ChatScreenState extends State<ChatScreen> {
                     children: [
                       Expanded(
                         child: BlocBuilder<MessengerBloc, MessengerState>(
-                          builder: (context, bloc) {
-                            if (bloc is LoadingMessengerState) {
+                          builder: (context, state) {
+                            if (state is LoadingMessengerState) {
                               return const CircularProgressIndicator();
-                            } else if (bloc is ErrorMessengerState) {
+                            } else if (state is ErrorMessengerState) {
                               return const Text("Error");
-                            } else if (bloc is LoadedMessengerState) {
+                            } else if (state is LoadedMessengerState) {
+                              final count = state.messages.length + (state.completedLoading ? 0 : 1);
                               return ListView.builder(
                                 controller: _scrollController,
-                                itemCount: bloc.messages.length +
-                                    (bloc.completedLoading ? 0 : 1),
-                                reverse: false,
+                                itemCount: count,
+                                reverse: true,
                                 itemBuilder: (context, index) {
-                                  final actualIndex =
-                                      index - (bloc.completedLoading ? 0 : 1);
-                                  if (index == 0 && actualIndex == -1) {
+                                  final actualIndex = count - index - (state.completedLoading ? 0 : 1) - 1;
+                                  if (!state.completedLoading && index == count - 1) {
+                                    log("Loading more messages");
+                                    BlocProvider.of<MessengerBloc>(context).add(MessageFetchEvent());
                                     return Container(
                                       alignment: Alignment.center,
                                       child: const CircularProgressIndicator(),
                                     );
                                   }
-                                  final Message msg =
-                                      bloc.messages[actualIndex];
+                                  final Message msg = state.messages[actualIndex];
                                   switch (msg.type) {
                                     case MessageType.TEXT:
                                       return Normal_message(

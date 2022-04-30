@@ -15,7 +15,7 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelsState> {
 
   FutureOr<void> onInit(final InitEvent event, Emitter<ChannelsState> emit) async {
     final List<ChatChannel> channels = await _messenger.fetchChannels(0, 10);
-    emit(LoadedState(channels, false));
+    emit(LoadedState(channels, channels.length < 10));
     _messenger.channelCreations.listen((event) {
         add(AddChannelEvent(event));
     });
@@ -27,9 +27,8 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelsState> {
       return;
     }
     final List<ChatChannel> channels = await _messenger.fetchChannels(stateC.channels.length, 10);
-    stateC.completedLoading = channels.isNotEmpty;
     stateC.channels.addAll(channels);
-    emit(stateC);
+    emit(LoadedState(stateC.channels, channels.length < 10));
   }
 
   FutureOr<void> onCreateChannel(final CreateChannelEvent event, Emitter<ChannelsState> emit) async {
@@ -42,7 +41,7 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelsState> {
       return;
     }
     stateC.channels.add(event.channel);
-    emit(stateC);
+    emit(LoadedState(stateC.channels, stateC.completedLoading));
   }
 }
 
