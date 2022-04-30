@@ -56,7 +56,7 @@ class MessengerBloc extends Bloc<MessengerEvent, MessengerState> {
     final List<Message> msg = await _messenger.fetchMessages(
         _channelId, capturedState.messages.length, 10);
     capturedState.messages.insertAll(0, msg);
-    emit(capturedState);
+    emit(LoadedMessengerState(capturedState.messages, msg.isEmpty));
   }
 }
 

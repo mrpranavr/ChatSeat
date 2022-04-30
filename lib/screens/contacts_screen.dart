@@ -71,14 +71,14 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     itemCount:
                         bloc.channels.length + (bloc.completedLoading ? 0 : 1),
                     itemBuilder: (context, index) {
-                      if (index >= bloc.channels.length) {
+                      if (!bloc.completedLoading && index >= bloc.channels.length) {
+                        BlocProvider.of<ChannelsBloc>(context).add(FetchEvent());
                         return const CircularProgressIndicator();
                       }
                       final ch = bloc.channels[index];
                       String name = ch.name;
                       String latestMessage = ch.lastMessage ?? "-";
-                      String imageUrl = ch.avatarFilePath ??
-                          "https://minervastrategies.com/wp-content/uploads/2016/03/default-avatar.jpg";
+                      String imageUrl = ch.avatarFilePath;
                       int unreadMessages = ch.unreadCount ?? 0;
                       return GestureDetector(
                         onTap: () {

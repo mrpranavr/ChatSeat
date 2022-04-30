@@ -38,7 +38,7 @@ class MessageRepository {
         offset: offset,
         orderBy: messages_table.colTimestamp + " DESC",
     );
-    return maps.map((e) => Message.fromMap(e)).toList();
+    return maps.map((e) => Message.fromMap(e)).toList().reversed.toList();
   }
 
   Future<int> delete(int id) async {
