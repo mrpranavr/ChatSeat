@@ -8,6 +8,7 @@ import 'package:onionchatflutter/model/messages.dart';
 import 'package:onionchatflutter/viewmodel/messenger_bloc.dart';
 import 'package:onionchatflutter/widgets/attachment_message.dart';
 import 'package:onionchatflutter/widgets/audio_message.dart';
+import 'package:onionchatflutter/widgets/image_message.dart';
 import 'package:onionchatflutter/widgets/normal_message.dart';
 import 'package:provider/provider.dart';
 
@@ -32,9 +33,10 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     BlocProvider.of<MessengerBloc>(context).add(MessengerInitEvent());
-    _subscription = BlocProvider.of<MessengerBloc>(context).stream.listen((state) {
+    _subscription =
+        BlocProvider.of<MessengerBloc>(context).stream.listen((state) {
       if (state is LoadedMessengerState) {
-       _scrollJumpDown();
+        _scrollJumpDown();
       }
     });
 
@@ -75,7 +77,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   CircleAvatar(
                     radius: 30,
-                    foregroundImage: AssetImage(widget.chatScreenArguments.imageUrl),
+                    foregroundImage:
+                        AssetImage(widget.chatScreenArguments.imageUrl),
                   ),
                   const SizedBox(
                     width: 20,
@@ -111,7 +114,8 @@ class _ChatScreenState extends State<ChatScreen> {
                         color: Colors.grey.withOpacity(0.5),
                         spreadRadius: 8,
                         blurRadius: 16,
-                        offset: const Offset(0, -5), // changes position of shadow
+                        offset:
+                            const Offset(0, -5), // changes position of shadow
                       ),
                     ],
                   ),
@@ -127,37 +131,55 @@ class _ChatScreenState extends State<ChatScreen> {
                             } else if (bloc is LoadedMessengerState) {
                               return ListView.builder(
                                 controller: _scrollController,
-                                itemCount: bloc.messages.length + (bloc.completedLoading ? 0 : 1),
+                                itemCount: bloc.messages.length +
+                                    (bloc.completedLoading ? 0 : 1),
                                 reverse: false,
                                 itemBuilder: (context, index) {
-                                  final actualIndex = index - (bloc.completedLoading ? 0 : 1);
+                                  final actualIndex =
+                                      index - (bloc.completedLoading ? 0 : 1);
                                   if (index == 0 && actualIndex == -1) {
                                     return Container(
                                       alignment: Alignment.center,
                                       child: const CircularProgressIndicator(),
                                     );
                                   }
-                                  final Message msg = bloc.messages[actualIndex];
+                                  final Message msg =
+                                      bloc.messages[actualIndex];
                                   switch (msg.type) {
                                     case MessageType.TEXT:
                                       return Normal_message(
-                                          sendType: msg.from == widget.chatScreenArguments.selfUserId ? "sent" : "received",
+                                          sendType: msg.from ==
+                                                  widget.chatScreenArguments
+                                                      .selfUserId
+                                              ? "sent"
+                                              : "received",
                                           message: (msg as TextMessage).message,
-                                          time: _format.format(DateTime.fromMillisecondsSinceEpoch(msg.timestamp))
-                                      );
+                                          time: _format.format(DateTime
+                                              .fromMillisecondsSinceEpoch(
+                                                  msg.timestamp)));
 
                                     case MessageType.FILE:
                                       return Attachment_message(
-                                          sendType: msg.from == widget.chatScreenArguments.selfUserId ? "sent" : "received",
-                                        url: (msg as DownloadableMessage).url,
-                                        time: _format.format(DateTime.fromMillisecondsSinceEpoch(msg.timestamp))
-                                      );
-                                    case MessageType.IMAGE:
-                                      return Attachment_message(
-                                          sendType: msg.from == widget.chatScreenArguments.selfUserId ? "sent" : "received",
+                                          sendType: msg.from ==
+                                                  widget.chatScreenArguments
+                                                      .selfUserId
+                                              ? "sent"
+                                              : "received",
                                           url: (msg as DownloadableMessage).url,
-                                          time: _format.format(DateTime.fromMillisecondsSinceEpoch(msg.timestamp))
-                                      );
+                                          time: _format.format(DateTime
+                                              .fromMillisecondsSinceEpoch(
+                                                  msg.timestamp)));
+                                    case MessageType.IMAGE:
+                                      return ImageMessage(
+                                          sendType: msg.from ==
+                                                  widget.chatScreenArguments
+                                                      .selfUserId
+                                              ? "sent"
+                                              : "received",
+                                          url: (msg as DownloadableMessage).url,
+                                          time: _format.format(DateTime
+                                              .fromMillisecondsSinceEpoch(
+                                                  msg.timestamp)));
                                     case MessageType.AUDIO:
                                       return const AudioMessage();
                                   }
@@ -230,13 +252,15 @@ class _ChatScreenState extends State<ChatScreen> {
                                   _messageController.text.trim().isEmpty) {
                                 return;
                               } else {
-                                final bloc = BlocProvider.of<MessengerBloc>(context);
+                                final bloc =
+                                    BlocProvider.of<MessengerBloc>(context);
                                 bloc.add(MessageSendEvent(TextMessage(
-                                  from: widget.chatScreenArguments.selfUserId,
-                                  channelName: widget.chatScreenArguments.channelId,
-                                  timestamp: DateTime.now().millisecondsSinceEpoch,
-                                  message: _messageController.text.trim()
-                                )));
+                                    from: widget.chatScreenArguments.selfUserId,
+                                    channelName:
+                                        widget.chatScreenArguments.channelId,
+                                    timestamp:
+                                        DateTime.now().millisecondsSinceEpoch,
+                                    message: _messageController.text.trim())));
                                 setState(() {
                                   _messageController.clear();
                                 });
@@ -268,7 +292,8 @@ class ChatScreenArguments {
   final String imageUrl;
   final String name;
 
-  ChatScreenArguments(this.channelId, this.imageUrl, this.name, this.selfUserId);
+  ChatScreenArguments(
+      this.channelId, this.imageUrl, this.name, this.selfUserId);
 }
 
 /*
