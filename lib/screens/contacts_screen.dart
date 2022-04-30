@@ -25,6 +25,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
     BlocProvider.of<ChannelsBloc>(context).add(InitEvent());
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,6 +69,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                   builder: (ctx, bloc) {
                 if (bloc is LoadedState) {
                   return ListView.builder(
+                    padding: EdgeInsets.zero,
                     itemCount:
                         bloc.channels.length + (bloc.completedLoading ? 0 : 1),
                     itemBuilder: (context, index) {

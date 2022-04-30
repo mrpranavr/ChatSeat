@@ -15,11 +15,12 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  static final navigationKey = GlobalKey<NavigatorState>(debugLabel: "base-navigator");
+  static final navigationKey =
+      GlobalKey<NavigatorState>(debugLabel: "base-navigator");
 
   const MyApp({Key? key}) : super(key: key);
 
- @override
+  @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
@@ -42,15 +43,21 @@ class MyApp extends StatelessWidget {
         onGenerateRoute: (settings) {
           switch (settings.name) {
             case LoginScreen.routeName:
-              return PageRouteBuilder(pageBuilder: (context, a, b) => LoginScreen());
+              return PageRouteBuilder(
+                  pageBuilder: (context, a, b) => LoginScreen());
             case SignUpScreen.routeName:
-              return PageRouteBuilder(pageBuilder: (context, a, b) => const SignUpScreen());
+              return PageRouteBuilder(
+                  pageBuilder: (context, a, b) => const SignUpScreen());
             case PostAuthenticationScreen.routeName:
-              final AuthenticatedArguments arguments = settings.arguments as AuthenticatedArguments;
+              final AuthenticatedArguments arguments =
+                  settings.arguments as AuthenticatedArguments;
               return PageRouteBuilder(pageBuilder: (context, a, b) {
                 return BlocProvider(
-                  create: (ctx) => PostAuthenticationCubit(InitialState(), arguments.connection),
-                  child: PostAuthenticationScreen(username: arguments.connection.account.fullJid.local ?? "Unknown"),
+                  create: (ctx) => PostAuthenticationCubit(
+                      InitialState(), arguments.connection),
+                  child: PostAuthenticationScreen(
+                      username: arguments.connection.account.fullJid.local ??
+                          "Unknown"),
                 );
               });
           }
@@ -64,5 +71,4 @@ class AuthenticatedArguments {
   final Connection connection;
 
   AuthenticatedArguments(this.connection);
-
 }
