@@ -6,6 +6,7 @@ import 'package:onionchatflutter/screens/chat_screen.dart';
 import 'package:onionchatflutter/viewmodel/channels_bloc.dart';
 import 'package:onionchatflutter/widgets/nav_drawer.dart';
 
+import '../widgets/add_contact_dialog.dart';
 import '../widgets/chat_cards.dart';
 
 class ContactsScreen extends StatefulWidget {
@@ -109,11 +110,15 @@ class _ContactsScreenState extends State<ContactsScreen> {
       ),
       floatingActionButton: GestureDetector(
         onTap: () {
-          BlocProvider.of<ChannelsBloc>(context)
-              .add(CreateChannelEvent("test"));
-          if (kDebugMode) {
-            print('Add new contacts here');
-          }
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => AddContactDialog(),
+          );
+          // BlocProvider.of<ChannelsBloc>(context)
+          //     .add(CreateChannelEvent("test"));
+          // if (kDebugMode) {
+          //   print('Add new contacts here');
+          // }
         },
         child: Image.asset('Assets/Icons/AddContacts.png'),
       ),
