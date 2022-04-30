@@ -19,12 +19,12 @@ class ContactsScreen extends StatefulWidget {
 }
 
 class _ContactsScreenState extends State<ContactsScreen> {
-
   @override
   void initState() {
     BlocProvider.of<ChannelsBloc>(context).add(InitEvent());
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,11 +68,17 @@ class _ContactsScreenState extends State<ContactsScreen> {
                   builder: (ctx, bloc) {
                 if (bloc is LoadedState) {
                   return ListView.builder(
+                    padding: EdgeInsets.zero,
                     itemCount:
                         bloc.channels.length + (bloc.completedLoading ? 0 : 1),
                     itemBuilder: (context, index) {
                       if (index >= bloc.channels.length) {
-                        return const CircularProgressIndicator();
+                        return Column(
+                          children: const [
+                            SizedBox(height: 10),
+                            Center(child: CircularProgressIndicator()),
+                          ],
+                        );
                       }
                       final ch = bloc.channels[index];
                       String name = ch.name;
@@ -82,14 +88,15 @@ class _ContactsScreenState extends State<ContactsScreen> {
                       int unreadMessages = ch.unreadCount ?? 0;
                       return GestureDetector(
                         onTap: () {
-                          Navigator.of(context).pushNamed(ChatScreen.routeName, arguments: ChatScreenArguments(name, imageUrl, name, widget.selfUserId));
+                          Navigator.of(context).pushNamed(ChatScreen.routeName,
+                              arguments: ChatScreenArguments(
+                                  name, imageUrl, name, widget.selfUserId));
                         },
                         child: ChatCards(
                             name: name,
                             latestMessage: latestMessage,
                             imageUrl: imageUrl,
-                            unreadMessages: unreadMessages
-                        ),
+                            unreadMessages: unreadMessages),
                       );
                     },
                   );
@@ -102,7 +109,8 @@ class _ContactsScreenState extends State<ContactsScreen> {
       ),
       floatingActionButton: GestureDetector(
         onTap: () {
-          BlocProvider.of<ChannelsBloc>(context).add(CreateChannelEvent("test"));
+          BlocProvider.of<ChannelsBloc>(context)
+              .add(CreateChannelEvent("test"));
           if (kDebugMode) {
             print('Add new contacts here');
           }
