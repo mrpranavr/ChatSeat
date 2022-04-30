@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onionchatflutter/constants.dart';
+import 'package:photo_view/photo_view.dart';
 
 class ImageMessage extends StatelessWidget {
   final String sendType;
@@ -30,6 +31,11 @@ class ImageMessage extends StatelessWidget {
               ),
               child: GestureDetector(
                 onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) {
+                    return FocusImage(
+                      url: url,
+                    );
+                  }));
                   print('download and view image');
                 },
                 child: Container(
@@ -79,6 +85,11 @@ class ImageMessage extends StatelessWidget {
               ),
               child: GestureDetector(
                 onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) {
+                    return FocusImage(
+                      url: url,
+                    );
+                  }));
                   print('download and view image');
                 },
                 child: Container(
@@ -111,5 +122,23 @@ class ImageMessage extends StatelessWidget {
         ],
       );
     }
+  }
+}
+
+class FocusImage extends StatelessWidget {
+  final String url;
+  const FocusImage({
+    Key? key,
+    required this.url,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: GestureDetector(
+      child: PhotoView(
+        imageProvider: NetworkImage(url),
+      ),
+    ));
   }
 }
