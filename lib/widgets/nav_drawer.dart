@@ -89,7 +89,7 @@ class _NavDrawerState extends State<NavDrawer> {
                             shape: BoxShape.circle,
                             color: Colors.white,
                             border: Border.all(width: 3, color: dark_accent),
-                            image: DecorationImage(
+                            image: const DecorationImage(
                               image: AssetImage('Assets/Icons/editIcon.png'),
                             ),
                           ),

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,6 +27,12 @@ class _ContactsScreenState extends State<ContactsScreen> {
     BlocProvider.of<ChannelsBloc>(context).add(InitEvent());
     super.initState();
   }
+
+  @override
+  void activate() {
+    super.activate();
+  }
+  
 
   @override
   Widget build(BuildContext context) {
