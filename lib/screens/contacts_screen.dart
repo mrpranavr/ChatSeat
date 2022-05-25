@@ -66,28 +66,6 @@ class _ContactsScreenState extends State<ContactsScreen> {
             const SizedBox(
               height: 20,
             ),
-            TextField(
-              scrollPadding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
-              decoration: const InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20),
-                  ),
-                ),
-                hintText: 'Add new user here',
-                fillColor: Color(0xffE5E5E5),
-                filled: true,
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: text_field_color, width: 3),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20),
-                  ),
-                ),
-              ),
-              controller: _userID,
-            ),
             SizedBox(
               height: 10,
             ),
@@ -134,18 +112,81 @@ class _ContactsScreenState extends State<ContactsScreen> {
       ),
       floatingActionButton: GestureDetector(
         onTap: () {
-          // showDialog(
-          //   context: context,
-          //   builder: (BuildContext context) => contact(context),
-          // );
-          BlocProvider.of<ChannelsBloc>(context)
-              .add(CreateChannelEvent(_userID.text));
-          if (kDebugMode) {
-            print('Add new contacts here');
-          }
+          showDialog(
+              context: context,
+              builder: (BuildContext c) => AlertDialog(
+                    title: const Text(
+                      "Add new contact",
+                      style: TextStyle(
+                        fontFamily: FontFamily_main,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    content: Container(
+                      height: 180,
+                      child: Column(
+                        children: [
+                          const Text(
+                            'Enter user ID',
+                            style: TextStyle(
+                              fontFamily: FontFamily_main,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          TextField(
+                            scrollPadding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom),
+                            decoration: const InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.transparent),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20),
+                                ),
+                              ),
+                              hintText: 'Enter username',
+                              fillColor: Color(0xffE5E5E5),
+                              filled: true,
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: text_field_color, width: 3),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20),
+                                ),
+                              ),
+                            ),
+                            controller: _userID,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          ElevatedButton(
+                              onPressed: () {
+                                BlocProvider.of<ChannelsBloc>(context)
+                                    .add(CreateChannelEvent(_userID.text));
+                                if (kDebugMode) {
+                                  print('Add new contacts here');
+                                }
+                                FocusScope.of(context)
+                                    .requestFocus(FocusNode());
+                                Navigator.of(c).pop();
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  primary: Color(0xff822FAF),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10))),
+                              child: Text("Add Contact",
+                                  style: TextStyle(
+                                    fontFamily: FontFamily_main,
+                                  )))
+                        ],
+                      ),
+                    ),
+                  ));
 
           _userID.clear();
-          FocusScope.of(context).requestFocus(new FocusNode());
         },
         child: Image.asset('Assets/Icons/AddContacts.png'),
       ),

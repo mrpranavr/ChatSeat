@@ -7,6 +7,7 @@ import 'package:onionchatflutter/screens/contacts_screen.dart';
 import '../viewmodel/channels_bloc.dart';
 
 class AddContactDialog extends StatefulWidget {
+  static const routeName = '/popup';
   AddContactDialog({Key? key}) : super(key: key);
 
   @override
