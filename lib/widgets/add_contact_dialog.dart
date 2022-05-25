@@ -2,13 +2,25 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:onionchatflutter/constants.dart';
+import 'package:onionchatflutter/screens/contacts_screen.dart';
 
 import '../viewmodel/channels_bloc.dart';
 
-class AddContactDialog extends StatelessWidget {
+class AddContactDialog extends StatefulWidget {
   AddContactDialog({Key? key}) : super(key: key);
 
+  @override
+  State<AddContactDialog> createState() => _AddContactDialogState();
+}
+
+class _AddContactDialogState extends State<AddContactDialog> {
   final _userID = TextEditingController();
+
+  // @override
+  // void initState() {
+  //   BlocProvider.of<ChannelsBloc>(context).add(InitEvent());
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +72,11 @@ class AddContactDialog extends StatelessWidget {
             ElevatedButton(
                 onPressed: () {
                   BlocProvider.of<ChannelsBloc>(context)
-                      .add(CreateChannelEvent("test"));
+                      .add(CreateChannelEvent(_userID.text));
                   if (kDebugMode) {
                     print('Add new contacts here');
                   }
+                  FocusScope.of(context).requestFocus(FocusNode());
                 },
                 style: ElevatedButton.styleFrom(
                     primary: Color(0xff822FAF),

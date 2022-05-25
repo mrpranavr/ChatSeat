@@ -20,6 +20,7 @@ class ContactsScreen extends StatefulWidget {
 }
 
 class _ContactsScreenState extends State<ContactsScreen> {
+  final _userID = TextEditingController();
 
   @override
   void initState() {
@@ -65,6 +66,31 @@ class _ContactsScreenState extends State<ContactsScreen> {
             const SizedBox(
               height: 20,
             ),
+            TextField(
+              scrollPadding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              decoration: const InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.transparent),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                ),
+                hintText: 'Add new user here',
+                fillColor: Color(0xffE5E5E5),
+                filled: true,
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: text_field_color, width: 3),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                ),
+              ),
+              controller: _userID,
+            ),
+            SizedBox(
+              height: 10,
+            ),
             Expanded(
               child: BlocBuilder<ChannelsBloc, ChannelsState>(
                   builder: (ctx, bloc) {
@@ -74,8 +100,10 @@ class _ContactsScreenState extends State<ContactsScreen> {
                     itemCount:
                         bloc.channels.length + (bloc.completedLoading ? 0 : 1),
                     itemBuilder: (context, index) {
-                      if (!bloc.completedLoading && index >= bloc.channels.length) {
-                        BlocProvider.of<ChannelsBloc>(context).add(FetchEvent());
+                      if (!bloc.completedLoading &&
+                          index >= bloc.channels.length) {
+                        BlocProvider.of<ChannelsBloc>(context)
+                            .add(FetchEvent());
                         return const CircularProgressIndicator();
                       }
                       final ch = bloc.channels[index];
@@ -85,14 +113,15 @@ class _ContactsScreenState extends State<ContactsScreen> {
                       int unreadMessages = ch.unreadCount ?? 0;
                       return GestureDetector(
                         onTap: () {
-                          Navigator.of(context).pushNamed(ChatScreen.routeName, arguments: ChatScreenArguments(name, imageUrl, name, widget.selfUserId));
+                          Navigator.of(context).pushNamed(ChatScreen.routeName,
+                              arguments: ChatScreenArguments(
+                                  name, imageUrl, name, widget.selfUserId));
                         },
                         child: ChatCards(
                             name: name,
                             latestMessage: latestMessage,
                             imageUrl: imageUrl,
-                            unreadMessages: unreadMessages
-                        ),
+                            unreadMessages: unreadMessages),
                       );
                     },
                   );
@@ -105,21 +134,25 @@ class _ContactsScreenState extends State<ContactsScreen> {
       ),
       floatingActionButton: GestureDetector(
         onTap: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) => AddContactDialog(),
-          );
-          // BlocProvider.of<ChannelsBloc>(context)
-          //     .add(CreateChannelEvent("test"));
-          // if (kDebugMode) {
-          //   print('Add new contacts here');
-          // }
+          // showDialog(
+          //   context: context,
+          //   builder: (BuildContext context) => contact(context),
+          // );
+          BlocProvider.of<ChannelsBloc>(context)
+              .add(CreateChannelEvent(_userID.text));
+          if (kDebugMode) {
+            print('Add new contacts here');
+          }
+
+          _userID.clear();
+          FocusScope.of(context).requestFocus(new FocusNode());
         },
         child: Image.asset('Assets/Icons/AddContacts.png'),
       ),
     );
   }
 }
+
 
 /**
  * Consumer<ChatCardsinfo>(
