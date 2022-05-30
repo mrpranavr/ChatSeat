@@ -8,7 +8,6 @@ import 'package:onionchatflutter/screens/chat_screen.dart';
 import 'package:onionchatflutter/viewmodel/channels_bloc.dart';
 import 'package:onionchatflutter/widgets/nav_drawer.dart';
 
-import '../widgets/add_contact_dialog.dart';
 import '../widgets/chat_cards.dart';
 
 class ContactsScreen extends StatefulWidget {
@@ -33,7 +32,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
   void activate() {
     super.activate();
   }
-  
+
 
   @override
   Widget build(BuildContext context) {
