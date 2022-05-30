@@ -32,7 +32,14 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelsState> {
   }
 
   FutureOr<void> onCreateChannel(final CreateChannelEvent event, Emitter<ChannelsState> emit) async {
-    _messenger.createChannel(event.channelId);
+    final chatChannel = await _messenger.createChannel(event.channelId);
+    final stateC = state;
+    if (stateC is! LoadedState) {
+      emit(LoadedState(<ChatChannel>[chatChannel], false));
+      return;
+    }
+    stateC.channels.add(chatChannel);
+    emit(LoadedState(stateC.channels, stateC.completedLoading));
   }
 
   FutureOr<void> onAddChannel(final AddChannelEvent event, Emitter<ChannelsState> emit) async {
