@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:onionchatflutter/constants.dart';
 
 class NavDrawer extends StatefulWidget {
-  // The current user's name should be passes into this widget
+  final String username;
 
   const NavDrawer({
-    Key? key,
+    Key? key, required this.username,
   }) : super(key: key);
 
   @override
@@ -42,7 +42,7 @@ class _NavDrawerState extends State<NavDrawer> {
               ),
               Text(
                 // Replace with the username of the current user.
-                'Vaishnav_Anil ',
+                widget.username,
                 style: TextStyle(
                     fontSize: 26,
                     fontFamily: FontFamily_main,

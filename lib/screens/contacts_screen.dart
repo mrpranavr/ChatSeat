@@ -35,7 +35,9 @@ class _ContactsScreenState extends State<ContactsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const NavDrawer(),
+      drawer: NavDrawer(
+        username: widget.selfUserId,
+      ),
       body: Container(
         padding: const EdgeInsets.fromLTRB(15, 40, 15, 10),
         child: Column(
