@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,7 +31,6 @@ class _ContactsScreenState extends State<ContactsScreen> {
   void activate() {
     super.activate();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -98,9 +95,13 @@ class _ContactsScreenState extends State<ContactsScreen> {
                       int unreadMessages = ch.unreadCount ?? 0;
                       return GestureDetector(
                         onTap: () {
-                          Navigator.of(context).pushNamed(ChatScreen.routeName,
-                              arguments: ChatScreenArguments(
-                                  name, imageUrl, name, widget.selfUserId));
+                          Navigator.of(context)
+                              .pushNamed(ChatScreen.routeName,
+                                  arguments: ChatScreenArguments(
+                                      name, imageUrl, name, widget.selfUserId))
+                              .then((value) {
+                              BlocProvider.of<ChannelsBloc>(context).add(ChannelClosedEvent(ch));
+                          });
                         },
                         child: ChatCards(
                             name: name,
@@ -129,7 +130,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    content: Container(
+                    content: SizedBox(
                       height: 180,
                       child: Column(
                         children: [
@@ -140,7 +141,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 20),
                           TextField(
                             scrollPadding: EdgeInsets.only(
                                 bottom:
@@ -166,7 +167,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                             ),
                             controller: _userID,
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           ElevatedButton(
@@ -184,7 +185,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                                   primary: Color(0xff822FAF),
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10))),
-                              child: Text("Add Contact",
+                              child: const Text("Add Contact",
                                   style: TextStyle(
                                     fontFamily: FontFamily_main,
                                   )))
@@ -200,7 +201,6 @@ class _ContactsScreenState extends State<ContactsScreen> {
     );
   }
 }
-
 
 /**
  * Consumer<ChatCardsinfo>(

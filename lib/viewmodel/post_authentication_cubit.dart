@@ -37,9 +37,11 @@ class PostAuthenticationCubit extends Cubit<PostAuthenticationState> {
     emit(ReadyState(XmppMessenger(
         MessageRepository.fromDatabase(database),
         StreamController.broadcast(),
+        StreamController.broadcast(),
         _connection,
         ChannelRepository.fromDatabase(database),
         VCardManager.getInstance(_connection),
+        StreamController.broadcast(),
         StreamController.broadcast())));
   }
 }
