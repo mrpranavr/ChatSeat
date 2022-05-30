@@ -6,6 +6,7 @@ import 'package:onionchatflutter/model/chat_channel.dart' as cc;
 import 'package:onionchatflutter/model/chat_message.dart' as cm;
 import 'package:onionchatflutter/repository/channel_repository.dart';
 import 'package:onionchatflutter/repository/message_repository.dart';
+import 'package:onionchatflutter/util/connection_helper.dart';
 import 'package:onionchatflutter/xmpp/Connection.dart';
 import 'package:onionchatflutter/xmpp/elements/stanzas/MessageStanza.dart';
 import 'package:onionchatflutter/xmpp/xmpp_stone.dart';
@@ -101,6 +102,9 @@ class XmppMessenger extends Messenger {
   @override
   Future<cm.Message> sendMessage(cm.Message message) async {
     final insertedMessage = await _messageRepository.insert(message);
+    if (insertedMessage is cm.TextMessage) {
+      MessageHandler.getInstance(connection).sendMessage(message.channelId.toJid(), insertedMessage.message);
+    }
     return insertedMessage;
   }
 
