@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:image/image.dart' as img;
 import 'package:onionchatflutter/xmpp/elements/XmppAttribute.dart';
@@ -21,6 +22,9 @@ class VCard extends XmppElement {
   }
 
   String? get fullName => getChild('FN')?.textValue;
+  set fullName(String? value) {
+    getChild('FN')?.textValue = value;
+  }
 
   String? get familyName => getChild('N')?.getChild('FAMILY')?.textValue;
 
@@ -51,6 +55,13 @@ class VCard extends XmppElement {
   dynamic get imageData => _imageData;
 
   img.Image? get image => _image;
+  void setImage(Uint8List bytes) {
+    final encodedBytes = base64.encode(bytes);
+    _imageData = base64.decode(encodedBytes);
+    _image = img.decodeImage(_imageData);
+    getChild('PHOTO')?.getChild('TYPE')?.textValue = "image/jpeg";
+    getChild('PHOTO')?.getChild('BINVAL')?.textValue = encodedBytes;
+  }
 
   String? get imageType => getChild('PHOTO')?.getChild('TYPE')?.textValue;
 

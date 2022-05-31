@@ -105,7 +105,15 @@ class XmppMessenger extends Messenger {
             _channelCreationStreamController.add(created);
           });
           _incomingMessagesController.add(await _messageRepository.insert(msg));
-        });
+        }) {
+    _initializeSelfVCard();
+  }
+
+  Future<void> _initializeSelfVCard() async {
+    final card = await _vCardManager.getSelfVCard();
+    card.fullName = username + " ";
+
+  }
 
   @override
   Stream<cm.Message> get incomingMessages =>

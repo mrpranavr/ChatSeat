@@ -64,6 +64,12 @@ class VCardManager {
     return completer.future;
   }
 
+  void saveVCardFor(VCard card) {
+    var iqStanza = IqStanza(AbstractStanza.getRandomId(), IqStanzaType.SET);
+    iqStanza.addChild(card);
+    _connection.writeStanza(iqStanza);
+  }
+
   void _connectionStateProcessor(XmppConnectionState event) {}
 
   Map<String, VCard> getAllReceivedVCards() {
