@@ -6,10 +6,10 @@ abstract class Message {
   int? id;
   final MessageType type;
   final String from;
-  final String channelId;
+  final String channelName;
   final int timestamp;
 
-  Message(this.id, this.type, this.from, this.channelId, this.timestamp);
+  Message(this.id, this.type, this.from, this.channelName, this.timestamp);
 
   Map<String, Object> toMap();
 
@@ -89,7 +89,7 @@ class TextMessage extends Message {
       if (capturedId != null) messages_table.colId : capturedId,
       messages_table.colType : type.index,
       messages_table.colFrom : from,
-      messages_table.colChannelName : channelId,
+      messages_table.colChannelName : channelName,
       messages_table.colTimestamp : timestamp,
       messages_table.colBody : message,
     };
@@ -132,7 +132,7 @@ class DownloadableMessage extends Message {
       if (capturedId != null) messages_table.colId : capturedId,
       messages_table.colType : type.index,
       messages_table.colFrom : from,
-      messages_table.colChannelName : channelId,
+      messages_table.colChannelName : channelName,
       messages_table.colTimestamp : timestamp,
       messages_table.colUrl : url,
       messages_table.colFileName : name,

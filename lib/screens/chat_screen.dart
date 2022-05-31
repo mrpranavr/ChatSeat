@@ -47,6 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _messageController.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

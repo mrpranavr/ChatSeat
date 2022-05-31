@@ -50,7 +50,9 @@ class ChannelRepository {
   }
 
   Future<void> update(ChatChannel channel) async {
-    await database.update(channels_table.tableName, channel.toTableMap());
+    final map = channel.toTableMap();
+    map.remove(channels_table.colName);
+    await database.update(channels_table.tableName, map, where: "${channels_table.colName} = ?", whereArgs: [channel.name]);
   }
 
   Future close() async => database.close();

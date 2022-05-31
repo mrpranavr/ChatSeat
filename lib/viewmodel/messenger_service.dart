@@ -6,6 +6,7 @@ import 'package:onionchatflutter/model/chat_channel.dart' as cc;
 import 'package:onionchatflutter/model/chat_message.dart' as cm;
 import 'package:onionchatflutter/repository/channel_repository.dart';
 import 'package:onionchatflutter/repository/message_repository.dart';
+import 'package:onionchatflutter/util/connection_helper.dart';
 import 'package:onionchatflutter/xmpp/Connection.dart';
 import 'package:onionchatflutter/xmpp/elements/stanzas/MessageStanza.dart';
 import 'package:onionchatflutter/xmpp/xmpp_stone.dart';
@@ -13,9 +14,15 @@ import 'package:onionchatflutter/xmpp/xmpp_stone.dart';
 final DateFormat dateFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
 abstract class Messenger {
+  String? activeChannelId;
+
   Stream<cm.Message> get incomingMessages;
 
+  Stream<cm.Message> get outgoingMessages;
+
   Stream<cc.ChatChannel> get channelCreations;
+
+  Stream<cc.ChatChannel> get channelUpdates;
 
   String get username;
 
@@ -28,6 +35,8 @@ abstract class Messenger {
 
   Future<cc.ChatChannel> createChannel(String channelId);
 
+  Future<cc.ChatChannel?> updateLastSeen(String channelId);
+
   void dispose();
 }
 
@@ -37,15 +46,19 @@ class XmppMessenger extends Messenger {
   final VCardManager _vCardManager;
   final Connection connection;
   final StreamSubscription _stanzaSubscription;
-  final StreamController<cm.Message> _messagesController;
-  final StreamController<cc.ChatChannel> _channelCreationStreamController;
+  final StreamController<cm.Message> _incomingMessagesController;
+  final StreamController<cm.Message> _outgoingMessagesController;
 
+  final StreamController<cc.ChatChannel> _channelUpdationStreamController;
+  final StreamController<cc.ChatChannel> _channelCreationStreamController;
   XmppMessenger(
       this._messageRepository,
-      this._messagesController,
+      this._incomingMessagesController,
+      this._outgoingMessagesController,
       this.connection,
       this._channelRepository,
       this._vCardManager,
+      this._channelUpdationStreamController,
       this._channelCreationStreamController)
       : _stanzaSubscription = connection.inStanzasStream
             .where((abstractStanza) => abstractStanza is MessageStanza)
@@ -80,7 +93,7 @@ class XmppMessenger extends Messenger {
           }
           return message;
         }).listen((msg) async {
-          _channelRepository.getChannel(msg.channelId).then((channel) async {
+          _channelRepository.getChannel(msg.channelName).then((channel) async {
             if (channel != null) {
               return;
             }
@@ -91,16 +104,24 @@ class XmppMessenger extends Messenger {
             final created = await _channelRepository.insert(newChannel);
             _channelCreationStreamController.add(created);
           });
-          _messagesController.add(await _messageRepository.insert(msg));
+          _incomingMessagesController.add(await _messageRepository.insert(msg));
         });
 
   @override
   Stream<cm.Message> get incomingMessages =>
-      _messagesController.stream.asBroadcastStream();
+      _incomingMessagesController.stream.asBroadcastStream();
+
+  @override
+  Stream<cm.Message> get outgoingMessages =>
+      _outgoingMessagesController.stream.asBroadcastStream();
 
   @override
   Future<cm.Message> sendMessage(cm.Message message) async {
     final insertedMessage = await _messageRepository.insert(message);
+    _outgoingMessagesController.add(insertedMessage);
+    if (insertedMessage is cm.TextMessage) {
+      MessageHandler.getInstance(connection).sendMessage(message.channelName.toJid(), insertedMessage.message);
+    }
     return insertedMessage;
   }
 
@@ -133,7 +154,11 @@ class XmppMessenger extends Messenger {
   @override
   void dispose() {
     _stanzaSubscription.cancel();
-    _messagesController.close();
+    _incomingMessagesController.close();
+    _outgoingMessagesController.close();
+    _channelUpdationStreamController.close();
+    _channelCreationStreamController.close();
+
   }
 
   @override
@@ -142,4 +167,19 @@ class XmppMessenger extends Messenger {
 
   @override
   String get username => connection.fullJid.local ?? "Unknown";
+
+  @override
+  Future<ChatChannel?> updateLastSeen(String channelId) async {
+    final channel = await _channelRepository.getChannel(channelId);
+    if (channel == null) return null;
+    channel.lastViewed = DateTime.now().millisecondsSinceEpoch;
+    _channelUpdationStreamController.add(channel);
+    await _channelRepository.update(channel);
+    return channel;
+  }
+
+  @override
+  Stream<ChatChannel> get channelUpdates =>
+      _channelUpdationStreamController.stream.asBroadcastStream();
+
 }

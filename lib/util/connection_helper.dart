@@ -1,3 +1,4 @@
+import 'package:onionchatflutter/model/messages.dart';
 import 'package:onionchatflutter/xmpp/xmpp_stone.dart' as xmpp;
 
 const domain = 'dedf54xrpkdkekxc36ky4kofo6yq5gdndevh3mrpjlvdmcafsfsw2mqd.onion';
