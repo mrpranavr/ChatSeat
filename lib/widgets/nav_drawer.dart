@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:onionchatflutter/constants.dart';
+import 'package:onionchatflutter/xmpp/Connection.dart';
+import 'package:onionchatflutter/xmpp/xmpp_stone.dart';
 
 class NavDrawer extends StatefulWidget {
   final String username;
 
   const NavDrawer({
-    Key? key, required this.username,
+    Key? key,
+    required this.username,
   }) : super(key: key);
 
   @override
