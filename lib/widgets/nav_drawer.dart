@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:onionchatflutter/constants.dart';
 import 'package:onionchatflutter/xmpp/Connection.dart';
 import 'package:onionchatflutter/xmpp/xmpp_stone.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class NavDrawer extends StatefulWidget {
   final String username;
@@ -114,7 +115,38 @@ class _NavDrawerState extends State<NavDrawer> {
               TextButton.icon(
                 onPressed: () {
                   // Show QR function here
-                  print('show QR');
+
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      // title: Text("Scan QR cod"),
+                      content: Container(
+                        height: 270,
+                        width: 200,
+                        child: Column(
+                          children: [
+                            Center(
+                              child: QrImage(
+                                data: widget.username,
+                                size: 200,
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            Text(
+                              // Replace with the username of the current user.
+                              widget.username,
+                              style: TextStyle(
+                                  fontSize: 26,
+                                  fontFamily: FontFamily_main,
+                                  foreground: Paint()
+                                    ..shader = nameHeadingGradient,
+                                  fontWeight: FontWeight.w900),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
                 },
                 icon: Image.asset('Assets/Icons/qrIcon.png'),
                 label: const Text(
