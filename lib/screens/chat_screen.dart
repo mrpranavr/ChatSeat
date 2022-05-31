@@ -27,6 +27,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final DateFormat _format = DateFormat("dd-MM-yyyy HH:mm:ss a");
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
+
   StreamSubscription? _subscription;
   @override
   void initState() {
@@ -36,7 +37,6 @@ class _ChatScreenState extends State<ChatScreen> {
     //    _scrollJumpDown();
     //   }
     // });
-
     super.initState();
   }
 
@@ -126,22 +126,29 @@ class _ChatScreenState extends State<ChatScreen> {
                             } else if (state is ErrorMessengerState) {
                               return const Text("Error");
                             } else if (state is LoadedMessengerState) {
-                              final count = state.messages.length + (state.completedLoading ? 0 : 1);
+                              final count = state.messages.length +
+                                  (state.completedLoading ? 0 : 1);
                               return ListView.builder(
                                 controller: _scrollController,
                                 itemCount: count,
                                 reverse: true,
                                 itemBuilder: (context, index) {
-                                  final actualIndex = count - index - (state.completedLoading ? 0 : 1) - 1;
-                                  if (!state.completedLoading && index == count - 1) {
+                                  final actualIndex = count -
+                                      index -
+                                      (state.completedLoading ? 0 : 1) -
+                                      1;
+                                  if (!state.completedLoading &&
+                                      index == count - 1) {
                                     log("Loading more messages");
-                                    BlocProvider.of<MessengerBloc>(context).add(MessageFetchEvent());
+                                    BlocProvider.of<MessengerBloc>(context)
+                                        .add(MessageFetchEvent());
                                     return Container(
                                       alignment: Alignment.center,
                                       child: const CircularProgressIndicator(),
                                     );
                                   }
-                                  final Message msg = state.messages[actualIndex];
+                                  final Message msg =
+                                      state.messages[actualIndex];
                                   switch (msg.type) {
                                     case MessageType.TEXT:
                                       return Normal_message(
