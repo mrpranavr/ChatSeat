@@ -6,7 +6,6 @@ import 'package:onionchatflutter/repository/channels_table.dart'
     as channels_table;
 import 'package:onionchatflutter/repository/messages_table.dart'
     as messages_table;
-import 'package:onionchatflutter/util/connection_helper.dart';
 import 'package:onionchatflutter/viewmodel/messenger_service.dart';
 import 'package:onionchatflutter/xmpp/Connection.dart';
 import 'package:path/path.dart';
@@ -47,8 +46,10 @@ class PostAuthenticationCubit extends Cubit<PostAuthenticationState> {
         StreamController.broadcast())));
   }
 
-  Future<void> _initializeSelfVCard(VCardManager vCardManager, String username) async {
-    await _connection.connectionStateStream.firstWhere((element) => element == XmppConnectionState.Ready);
+  Future<void> _initializeSelfVCard(
+      VCardManager vCardManager, String username) async {
+    await _connection.connectionStateStream
+        .firstWhere((element) => element == XmppConnectionState.Ready);
     final card = await vCardManager.getSelfVCard();
     card.fullName = username + " ";
     card.givenName = username;
