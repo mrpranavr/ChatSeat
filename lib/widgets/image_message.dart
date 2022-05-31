@@ -1,8 +1,14 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:onionchatflutter/constants.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:photo_view/photo_view.dart';
 
-class ImageMessage extends StatelessWidget {
+class ImageMessage extends StatefulWidget {
   final String sendType;
   final String url;
   final String time;
@@ -12,8 +18,102 @@ class ImageMessage extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<ImageMessage> createState() => _ImageMessageState();
+}
+
+class _ImageMessageState extends State<ImageMessage> {
+  final Dio dio = Dio();
+
+  bool loading = false;
+
+  double progress = 0;
+
+  Future<bool> saveP(String url, String fileName) async {
+    Directory directory;
+    try {
+      if (Platform.isAndroid) {
+        if (await _requestPermission(Permission.storage)) {
+          directory = await getExternalStorageDirectory();
+          String newPath = "";
+          print(directory);
+          List<String> paths = directory.path.split("/");
+          for (int x = 1; x < paths.length; x++) {
+            String folder = paths[x];
+            if (folder != "Android") {
+              newPath += "/" + folder;
+            } else {
+              break;
+            }
+          }
+          newPath = newPath + "/IcarusApp";
+          directory = Directory(newPath);
+        } else {
+          return false;
+        }
+      } else {
+        if (await _requestPermission(Permission.photos)) {
+          directory = await getTemporaryDirectory();
+        } else {
+          return false;
+        }
+      }
+      File saveFile = File(directory.path + "/$fileName");
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+      if (await directory.exists()) {
+        await dio.download(url, saveFile.path,
+            onReceiveProgress: (value1, value2) {
+          setState(() {
+            progress = value1 / value2;
+          });
+        });
+        if (Platform.isIOS) {
+          await ImageGallerySaver.saveFile(saveFile.path,
+              isReturnPathOfIOS: true);
+        }
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> _requestPermission(Permission permission) async {
+    if (await permission.isGranted) {
+      return true;
+    } else {
+      var result = await permission.request();
+      if (result == PermissionStatus.granted) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  downloadFile() async {
+    setState(() {
+      loading = true;
+      progress = 0;
+    });
+    bool downloaded = await saveP(
+        "https://9to5mac.com/wp-content/uploads/sites/6/2021/09/Apple-TV.png",
+        "apple.png");
+    if (downloaded) {
+      print("File Downloaded");
+    } else {
+      print("Problem Downloading File Check the network mf..");
+    }
+    setState(() {
+      loading = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (sendType == 'sent') {
+    if (widget.sendType == 'sent') {
       return Column(
         children: [
           Align(
@@ -33,10 +133,11 @@ class ImageMessage extends StatelessWidget {
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) {
                     return FocusImage(
-                      url: url,
+                      url: widget.url,
                     );
                   }));
-                  print('download and view image');
+                  // print('download and view image');
+                  downloadFile;
                 },
                 child: Container(
                   padding:
@@ -47,7 +148,7 @@ class ImageMessage extends StatelessWidget {
                       Radius.circular(15),
                     ),
                   ),
-                  child: Image.network(url),
+                  child: Image.network(widget.url),
                 ),
               ),
             ),
@@ -58,7 +159,7 @@ class ImageMessage extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: Text(
-              time,
+              widget.time,
               style: messageTimeStyle,
             ),
           ),
@@ -87,10 +188,11 @@ class ImageMessage extends StatelessWidget {
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) {
                     return FocusImage(
-                      url: url,
+                      url: widget.url,
                     );
                   }));
-                  print('download and view image');
+                  // print('download and view image');
+                  downloadFile;
                 },
                 child: Container(
                   padding:
@@ -101,7 +203,7 @@ class ImageMessage extends StatelessWidget {
                       Radius.circular(15),
                     ),
                   ),
-                  child: Image.network(url),
+                  child: Image.network(widget.url),
                 ),
               ),
             ),
@@ -112,7 +214,7 @@ class ImageMessage extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              time,
+              widget.time,
               style: messageTimeStyle,
             ),
           ),
