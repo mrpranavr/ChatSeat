@@ -39,6 +39,8 @@ abstract class Messenger {
 
   Future<cc.ChatChannel?> updateLastSeen(String channelId);
 
+  Future<void> logout();
+
   void dispose();
 }
 
@@ -190,4 +192,9 @@ class XmppMessenger extends Messenger {
 
   @override
   VCardManager get vCardManager => _vCardManager;
+
+  @override
+  Future<void> logout() async {
+    connection.close();
+  }
 }

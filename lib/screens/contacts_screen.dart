@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:onionchatflutter/constants.dart';
 import 'package:onionchatflutter/screens/chat_screen.dart';
+import 'package:onionchatflutter/screens/login_screen.dart';
 import 'package:onionchatflutter/viewmodel/channels_bloc.dart';
 import 'package:onionchatflutter/widgets/nav_drawer.dart';
 
@@ -37,6 +38,10 @@ class _ContactsScreenState extends State<ContactsScreen> {
     return Scaffold(
       drawer: NavDrawer(
         username: widget.selfUserId,
+        onLogout: () {
+          BlocProvider.of<ChannelsBloc>(context).add(LogoutEvent());
+          Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(LoginScreen.routeName, (route) => false);
+        },
       ),
       body: Container(
         padding: const EdgeInsets.fromLTRB(15, 40, 15, 10),

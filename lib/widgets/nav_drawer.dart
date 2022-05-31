@@ -3,9 +3,11 @@ import 'package:onionchatflutter/constants.dart';
 
 class NavDrawer extends StatefulWidget {
   final String username;
-
+  final void Function() onLogout;
   const NavDrawer({
-    Key? key, required this.username,
+    Key? key,
+    required this.username,
+    required this.onLogout
   }) : super(key: key);
 
   @override
@@ -145,10 +147,7 @@ class _NavDrawerState extends State<NavDrawer> {
                 color: Color(0xffE2DBE6),
               ),
               TextButton.icon(
-                onPressed: () {
-                  // LogOut function here
-                  print('LogOut');
-                },
+                onPressed: widget.onLogout,
                 icon: Image.asset('Assets/Icons/LogoutIcon.png'),
                 label: const Text(
                   'Log Out',

@@ -18,6 +18,12 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelsState> {
     on<AddChannelEvent>(onAddChannel);
     on<ChannelMessageAddedEvent>(onChannelMessageAdded);
     on<ChannelClosedEvent>(onChannelClose);
+    on<LogoutEvent>(onLogout);
+  }
+
+  FutureOr<void> onLogout(
+      final LogoutEvent event, Emitter<ChannelsState> emit) async {
+    _messenger.logout();
   }
 
   FutureOr<void> onInit(final InitEvent event, Emitter<ChannelsState> emit) async {
@@ -92,6 +98,8 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelsState> {
 }
 
 abstract class ChannelsEvent {}
+
+class LogoutEvent extends ChannelsEvent {}
 
 class InitEvent extends ChannelsEvent {}
 

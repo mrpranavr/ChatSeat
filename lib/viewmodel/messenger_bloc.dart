@@ -75,6 +75,7 @@ class LoadedMessengerState extends MessengerState {
 
 abstract class MessengerEvent {}
 
+
 class MessageSendEvent extends MessengerEvent {
   final Message message;
 
