@@ -23,12 +23,30 @@ class VCard extends XmppElement {
 
   String? get fullName => getChild('FN')?.textValue;
   set fullName(String? value) {
-    getChild('FN')?.textValue = value;
+    var child = getChild('FN');
+    if (child == null) {
+      child = XmppElement();
+      child.name = 'FN';
+      addChild(child);
+    }
+    child.textValue = value;
   }
 
   String? get familyName => getChild('N')?.getChild('FAMILY')?.textValue;
 
   String? get givenName => getChild('N')?.getChild('GIVEN')?.textValue;
+  set givenName(String? value) {
+    var child = getChild('N')?.getChild('GIVEN');
+    if (child == null) {
+      final n = XmppElement();
+      n.name = 'N';
+      child = XmppElement();
+      child.name = 'GIVEN';
+      n.addChild(child);
+      addChild(n);
+    }
+    child.textValue = value;
+  }
 
   String? get prefixName => getChild('N')?.getChild('PREFIX')?.textValue;
 

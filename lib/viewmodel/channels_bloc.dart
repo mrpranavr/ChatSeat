@@ -5,6 +5,7 @@ import 'package:async/async.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:onionchatflutter/model/chat_channel.dart';
 import 'package:onionchatflutter/model/chat_message.dart';
+import 'package:onionchatflutter/util/connection_helper.dart';
 import 'package:onionchatflutter/viewmodel/messenger_service.dart';
 
 

@@ -66,6 +66,7 @@ class VCardManager {
 
   void saveVCardFor(VCard card) {
     var iqStanza = IqStanza(AbstractStanza.getRandomId(), IqStanzaType.SET);
+    iqStanza.fromJid = _connection.fullJid;
     iqStanza.addChild(card);
     _connection.writeStanza(iqStanza);
   }

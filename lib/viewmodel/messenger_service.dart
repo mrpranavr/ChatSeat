@@ -14,6 +14,8 @@ import 'package:onionchatflutter/xmpp/xmpp_stone.dart';
 final DateFormat dateFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
 abstract class Messenger {
+  VCardManager get vCardManager;
+
   String? activeChannelId;
 
   Stream<cm.Message> get incomingMessages;
@@ -51,6 +53,7 @@ class XmppMessenger extends Messenger {
 
   final StreamController<cc.ChatChannel> _channelUpdationStreamController;
   final StreamController<cc.ChatChannel> _channelCreationStreamController;
+
   XmppMessenger(
       this._messageRepository,
       this._incomingMessagesController,
@@ -63,6 +66,9 @@ class XmppMessenger extends Messenger {
       : _stanzaSubscription = connection.inStanzasStream
             .where((abstractStanza) => abstractStanza is MessageStanza)
             .map((stanza) => stanza as MessageStanza)
+            .where((event) =>
+                (event.type == MessageStanzaType.CHAT || event.type == MessageStanzaType.NORMAL) &&
+                event.fromJid != event.toJid)
             .map((stanza) {
           final fileExtension = stanza.getChild("onion_msg_type");
           final delayExtension = stanza.getChild("delay");
@@ -105,15 +111,7 @@ class XmppMessenger extends Messenger {
             _channelCreationStreamController.add(created);
           });
           _incomingMessagesController.add(await _messageRepository.insert(msg));
-        }) {
-    _initializeSelfVCard();
-  }
-
-  Future<void> _initializeSelfVCard() async {
-    final card = await _vCardManager.getSelfVCard();
-    card.fullName = username + " ";
-
-  }
+        }) {}
 
   @override
   Stream<cm.Message> get incomingMessages =>
@@ -128,7 +126,8 @@ class XmppMessenger extends Messenger {
     final insertedMessage = await _messageRepository.insert(message);
     _outgoingMessagesController.add(insertedMessage);
     if (insertedMessage is cm.TextMessage) {
-      MessageHandler.getInstance(connection).sendMessage(message.channelName.toJid(), insertedMessage.message);
+      MessageHandler.getInstance(connection)
+          .sendMessage(message.channelName.toJid(), insertedMessage.message);
     }
     return insertedMessage;
   }
@@ -166,7 +165,6 @@ class XmppMessenger extends Messenger {
     _outgoingMessagesController.close();
     _channelUpdationStreamController.close();
     _channelCreationStreamController.close();
-
   }
 
   @override
@@ -190,4 +188,6 @@ class XmppMessenger extends Messenger {
   Stream<ChatChannel> get channelUpdates =>
       _channelUpdationStreamController.stream.asBroadcastStream();
 
+  @override
+  VCardManager get vCardManager => _vCardManager;
 }
