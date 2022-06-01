@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:onionchatflutter/constants.dart';
+import 'package:onionchatflutter/screens/Scan_Qr.dart';
 import 'package:onionchatflutter/xmpp/Connection.dart';
 import 'package:onionchatflutter/xmpp/xmpp_stone.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -7,11 +8,8 @@ import 'package:qr_flutter/qr_flutter.dart';
 class NavDrawer extends StatefulWidget {
   final String username;
   final void Function() onLogout;
-  const NavDrawer({
-    Key? key,
-    required this.username,
-    required this.onLogout
-  }) : super(key: key);
+  const NavDrawer({Key? key, required this.username, required this.onLogout})
+      : super(key: key);
 
   @override
   State<NavDrawer> createState() => _NavDrawerState();
@@ -163,7 +161,8 @@ class _NavDrawerState extends State<NavDrawer> {
               TextButton.icon(
                 onPressed: () {
                   // Scan QR function here
-                  print('Scan QR');
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) => ScanQR()));
                 },
                 icon: Image.asset('Assets/Icons/qrIcon.png'),
                 label: const Text(
