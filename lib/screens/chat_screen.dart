@@ -47,7 +47,6 @@ class _ChatScreenState extends State<ChatScreen> {
     _messageController.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -185,7 +184,16 @@ class _ChatScreenState extends State<ChatScreen> {
                                               .fromMillisecondsSinceEpoch(
                                                   msg.timestamp)));
                                     case MessageType.AUDIO:
-                                      return const AudioMessage();
+                                      return AudioMessage(
+                                          sendType: msg.from ==
+                                                  widget.chatScreenArguments
+                                                      .selfUserId
+                                              ? "sent"
+                                              : "received",
+                                          url: (msg as DownloadableMessage).url,
+                                          time: _format.format(DateTime
+                                              .fromMillisecondsSinceEpoch(
+                                                  msg.timestamp)));
                                   }
                                 },
                               );

@@ -40,22 +40,26 @@ class Attachment_message extends StatelessWidget {
                       Radius.circular(15),
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      Image.asset('Assets/Icons/FileIcon.png'),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        url.split('/').last,
-                        style: const TextStyle(
-                          fontFamily: FontFamily_main,
-                          fontSize: 18,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white,
+                  child: IntrinsicWidth(
+                    child: Row(
+                      children: [
+                        Image.asset('Assets/Icons/FileIcon.png'),
+                        const SizedBox(
+                          width: 8,
                         ),
-                      )
-                    ],
+                        Flexible(
+                          child: Text(
+                            url.split('/').last,
+                            style: const TextStyle(
+                              fontFamily: FontFamily_main,
+                              fontSize: 18,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
