@@ -1,10 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+//import 'package:flutter_chatData.chatInfo/flutter_chatData.chatInfo.dart';
 import 'package:onionchatflutter/constants.dart';
+import 'package:onionchatflutter/model/chat_info.dart';
 import 'package:onionchatflutter/screens/chat_screen.dart';
 import 'package:onionchatflutter/screens/login_screen.dart';
-import 'package:onionchatflutter/viewmodel/channels_bloc.dart';
+//import 'package:onionchatflutter/viewmodel/channels_chatData.chatInfo.dart';
 import 'package:onionchatflutter/widgets/nav_drawer.dart';
 
 import '../widgets/chat_cards.dart';
@@ -22,9 +23,13 @@ class ContactsScreen extends StatefulWidget {
 class _ContactsScreenState extends State<ContactsScreen> {
   final _userID = TextEditingController();
 
+  ChatCardsinfo chatData = new ChatCardsinfo();
+
   @override
   void initState() {
-    BlocProvider.of<ChannelsBloc>(context).add(InitEvent());
+    //chatData.chatInfoProvider
+    // .of<ChannelschatData.chatInfo>(context)
+    // .add(InitEvent());
     super.initState();
   }
 
@@ -39,8 +44,11 @@ class _ContactsScreenState extends State<ContactsScreen> {
       drawer: NavDrawer(
         username: widget.selfUserId,
         onLogout: () {
-          BlocProvider.of<ChannelsBloc>(context).add(LogoutEvent());
-          Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(LoginScreen.routeName, (route) => false);
+          // chatData.chatInfoProvider
+          //     .of<ChannelschatData.chatInfo>(context)
+          //     .add(LogoutEvent());
+          Navigator.of(context, rootNavigator: true)
+              .pushNamedAndRemoveUntil(LoginScreen.routeName, (route) => false);
         },
       ),
       body: Container(
@@ -81,47 +89,84 @@ class _ContactsScreenState extends State<ContactsScreen> {
               height: 10,
             ),
             Expanded(
-              child: BlocBuilder<ChannelsBloc, ChannelsState>(
-                  builder: (ctx, bloc) {
-                if (bloc is LoadedState) {
-                  return ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount:
-                        bloc.channels.length + (bloc.completedLoading ? 0 : 1),
-                    itemBuilder: (context, index) {
-                      if (!bloc.completedLoading &&
-                          index >= bloc.channels.length) {
-                        BlocProvider.of<ChannelsBloc>(context)
-                            .add(FetchEvent());
-                        return const CircularProgressIndicator();
-                      }
-                      final ch = bloc.channels[index];
-                      String name = ch.name;
-                      String latestMessage = ch.lastMessage ?? "-";
-                      String imageUrl = ch.avatarFilePath;
-                      int unreadMessages = ch.unreadCount ?? 0;
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.of(context)
-                              .pushNamed(ChatScreen.routeName,
-                                  arguments: ChatScreenArguments(
-                                      name, imageUrl, name, widget.selfUserId))
-                              .then((value) {
-                              BlocProvider.of<ChannelsBloc>(context).add(ChannelClosedEvent(ch));
-                          });
-                        },
-                        child: ChatCards(
-                            name: name,
-                            latestMessage: latestMessage,
-                            imageUrl: imageUrl,
-                            unreadMessages: unreadMessages),
-                      );
-                    },
-                  );
-                }
-                return const CircularProgressIndicator();
-              }),
-            ),
+                child:
+                    // chatData.chatInfoBuilder<ChannelschatData.chatInfo, ChannelsState>(
+                    //     builder: (ctx, chatData.chatInfo) {
+                    //   if (chatData.chatInfo is LoadedState) {
+                    //     return
+                    //     ListView.builder(
+                    //       padding: EdgeInsets.zero,
+                    //       itemCount:
+                    //           chatData.chatInfo.channels.length + (chatData.chatInfo.completedLoading ? 0 : 1),
+                    //       itemBuilder: (context, index) {
+                    //         if (!chatData.chatInfo.completedLoading &&
+                    //             index >= chatData.chatInfo.channels.length) {
+                    //           chatData.chatInfoProvider.of<ChannelschatData.chatInfo>(context)
+                    //               .add(FetchEvent());
+                    //           return const CircularProgressIndicator();
+                    //         }
+                    //         final ch = chatData.chatInfo.channels[index];
+                    //         String name = ch.name;
+                    //         String latestMessage = ch.lastMessage ?? "-";
+                    //         String imageUrl = ch.avatarFilePath;
+                    //         int unreadMessages = ch.unreadCount ?? 0;
+                    //         return GestureDetector(
+                    //           onTap: () {
+                    //             Navigator.of(context)
+                    //                 .pushNamed(ChatScreen.routeName,
+                    //                     arguments: ChatScreenArguments(
+                    //                         name, imageUrl, name, widget.selfUserId))
+                    //                 .then((value) {
+                    //               chatData.chatInfoProvider.of<ChannelschatData.chatInfo>(context)
+                    //                   .add(ChannelClosedEvent(ch));
+                    //             });
+                    //           },
+                    //           child: ChatCards(
+                    //               name: name,
+                    //               latestMessage: latestMessage,
+                    //               imageUrl: imageUrl,
+                    //               unreadMessages: unreadMessages),
+                    //         );
+                    //       },
+                    //     );
+                    //   //}
+                    //   //return const CircularProgressIndicator();
+                    // }),
+
+                    ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: chatData.chatInfo.length,
+              itemBuilder: (context, index) {
+                final ch = chatData.chatInfo[index];
+                String name = ch.name;
+                String latestMessage = ch.latestMessage ?? "-";
+                String imageUrl = ch.imageUrl;
+                int unreadMessages = ch.unreadMessageCounter ?? 0;
+                return GestureDetector(
+                  onTap: () {
+                    // Navigator.of(context).pushNamed(ChatScreen.routeName,
+                    //     arguments: ChatScreenArguments(
+                    //         name, imageUrl, name, widget.selfUserId));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ChatScreen(
+                              chatScreenArguments: new ChatScreenArguments(
+                                  '1', imageUrl, name, 'test123'))),
+                    );
+                    //     .then((value) {
+                    //   chatData.chatInfoProvider.of<ChannelschatData.chatInfo>(context)
+                    //       .add(ChannelClosedEvent(ch));
+                    // });
+                  },
+                  child: ChatCards(
+                      name: name,
+                      latestMessage: latestMessage,
+                      imageUrl: imageUrl,
+                      unreadMessages: unreadMessages),
+                );
+              },
+            )),
           ],
         ),
       ),
@@ -179,8 +224,9 @@ class _ContactsScreenState extends State<ContactsScreen> {
                           ),
                           ElevatedButton(
                               onPressed: () {
-                                BlocProvider.of<ChannelsBloc>(context)
-                                    .add(CreateChannelEvent(_userID.text));
+                                // chatData.chatInfoProvider
+                                //     .of<ChannelschatData.chatInfo>(context)
+                                //     .add(CreateChannelEvent(_userID.text));
                                 if (kDebugMode) {
                                   print('Add new contacts here');
                                 }

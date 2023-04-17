@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:onionchatflutter/constants.dart';
-import 'package:onionchatflutter/viewmodel/messenger_bloc.dart';
+import 'package:onionchatflutter/model/messages.dart';
+//import 'package:onionchatflutter/viewmodel/messenger_bloc.dart';
 import 'package:onionchatflutter/widgets/attachment_message.dart';
 import 'package:onionchatflutter/widgets/audio_message.dart';
 import 'package:onionchatflutter/widgets/image_message.dart';
 import 'package:onionchatflutter/widgets/normal_message.dart';
+import 'package:provider/provider.dart';
 import '../model/chat_message.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -31,7 +33,7 @@ class _ChatScreenState extends State<ChatScreen> {
   StreamSubscription? _subscription;
   @override
   void initState() {
-    BlocProvider.of<MessengerBloc>(context).add(MessengerInitEvent());
+    //BlocProvider.of<MessengerBloc>(context).add(MessengerInitEvent());
     // _subscription = BlocProvider.of<MessengerBloc>(context).stream.listen((state) {
     //   if (mounted && state is LoadedMessengerState) {
     //    _scrollJumpDown();
@@ -46,6 +48,8 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollController.dispose();
     _messageController.dispose();
   }
+
+  ChatMessage chatData = new ChatMessage();
 
   @override
   Widget build(BuildContext context) {
@@ -118,89 +122,46 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: Column(
                     children: [
                       Expanded(
-                        child: BlocBuilder<MessengerBloc, MessengerState>(
-                          builder: (context, state) {
-                            if (state is LoadingMessengerState) {
-                              return const CircularProgressIndicator();
-                            } else if (state is ErrorMessengerState) {
-                              return const Text("Error");
-                            } else if (state is LoadedMessengerState) {
-                              final count = state.messages.length +
-                                  (state.completedLoading ? 0 : 1);
-                              return ListView.builder(
-                                controller: _scrollController,
-                                itemCount: count,
-                                reverse: true,
-                                itemBuilder: (context, index) {
-                                  final actualIndex = count -
-                                      index -
-                                      (state.completedLoading ? 0 : 1) -
-                                      1;
-                                  if (!state.completedLoading &&
-                                      index == count - 1) {
-                                    log("Loading more messages");
-                                    BlocProvider.of<MessengerBloc>(context)
-                                        .add(MessageFetchEvent());
-                                    return Container(
-                                      alignment: Alignment.center,
-                                      child: const CircularProgressIndicator(),
-                                    );
-                                  }
-                                  final Message msg =
-                                      state.messages[actualIndex];
-                                  switch (msg.type) {
-                                    case MessageType.TEXT:
-                                      return Normal_message(
-                                          sendType: msg.from ==
-                                                  widget.chatScreenArguments
-                                                      .selfUserId
-                                              ? "sent"
-                                              : "received",
-                                          message: (msg as TextMessage).message,
-                                          time: _format.format(DateTime
-                                              .fromMillisecondsSinceEpoch(
-                                                  msg.timestamp)));
-
-                                    case MessageType.FILE:
-                                      return Attachment_message(
-                                          sendType: msg.from ==
-                                                  widget.chatScreenArguments
-                                                      .selfUserId
-                                              ? "sent"
-                                              : "received",
-                                          url: (msg as DownloadableMessage).url,
-                                          time: _format.format(DateTime
-                                              .fromMillisecondsSinceEpoch(
-                                                  msg.timestamp)));
-                                    case MessageType.IMAGE:
-                                      return ImageMessage(
-                                          sendType: msg.from ==
-                                                  widget.chatScreenArguments
-                                                      .selfUserId
-                                              ? "sent"
-                                              : "received",
-                                          url: (msg as DownloadableMessage).url,
-                                          time: _format.format(DateTime
-                                              .fromMillisecondsSinceEpoch(
-                                                  msg.timestamp)));
-                                    case MessageType.AUDIO:
-                                      return AudioMessage(
-                                          sendType: msg.from ==
-                                                  widget.chatScreenArguments
-                                                      .selfUserId
-                                              ? "sent"
-                                              : "received",
-                                          url: (msg as DownloadableMessage).url,
-                                          time: _format.format(DateTime
-                                              .fromMillisecondsSinceEpoch(
-                                                  msg.timestamp)));
-                                  }
-                                },
+                        child: Consumer<ChatMessage>(
+                            builder: (context, messages, index) {
+                          return ListView.builder(
+                            // controller: _controller,
+                            reverse: true,
+                            itemCount: messages.SpoofMessages.length,
+                            itemBuilder: (context, index) {
+                              final reversedIndex =
+                                  messages.SpoofMessages.length - 1 - index;
+                              String message =
+                                  messages.SpoofMessages[reversedIndex].message;
+                              String time =
+                                  messages.SpoofMessages[reversedIndex].time;
+                              String sendType = messages
+                                  .SpoofMessages[reversedIndex].sendType;
+                              String type =
+                                  messages.SpoofMessages[reversedIndex].type;
+                              String attachmentUrl = messages
+                                  .SpoofMessages[reversedIndex].attachmentUrl;
+                              if (type == 'recording') {
+                                //return AudioMessage();
+                              } else if (type == 'attachment') {
+                                return Attachment_message(
+                                  sendType: sendType,
+                                  url: attachmentUrl,
+                                  time: time,
+                                );
+                              }
+                              return Normal_message(
+                                sendType: sendType,
+                                message: message,
+                                time: time,
                               );
-                            }
-                            return const Text("...");
-                          },
-                        ),
+
+                              //return CircularProgressIndicator();
+                            },
+                          );
+                        }
+                            // child:
+                            ),
                       ),
                       const SizedBox(
                         height: 10,
@@ -264,15 +225,23 @@ class _ChatScreenState extends State<ChatScreen> {
                                   _messageController.text.trim().isEmpty) {
                                 return;
                               } else {
-                                final bloc =
-                                    BlocProvider.of<MessengerBloc>(context);
-                                bloc.add(MessageSendEvent(TextMessage(
-                                    from: widget.chatScreenArguments.selfUserId,
-                                    channelName:
-                                        widget.chatScreenArguments.channelId,
-                                    timestamp:
-                                        DateTime.now().millisecondsSinceEpoch,
-                                    message: _messageController.text.trim())));
+                                // final bloc =
+                                //     BlocProvider.of<MessengerBloc>(context);
+                                // bloc.add(MessageSendEvent(TextMessage(
+                                //     from: widget.chatScreenArguments.selfUserId,
+                                //     channelName:
+                                //         widget.chatScreenArguments.channelId,
+                                //     timestamp:
+                                //         DateTime.now().millisecondsSinceEpoch,
+                                //     message: _messageController.text.trim())));
+                                Messages newMessage = new Messages(
+                                    type: 'sent',
+                                    sendType: 'normal',
+                                    message: _messageController.text,
+                                    time: DateTime.now().toString(),
+                                    attachmentUrl: '');
+                                ChatMessage().sentMessage(newMessage);
+                                // print(newMessage.message);
                                 setState(() {
                                   _messageController.clear();
                                 });

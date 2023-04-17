@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:onionchatflutter/constants.dart';
 import 'package:onionchatflutter/main.dart';
+import 'package:onionchatflutter/screens/contacts_screen.dart';
 import 'package:onionchatflutter/screens/post_authentication_screen.dart';
 import 'package:onionchatflutter/viewmodel/login_view_model.dart';
 
@@ -47,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Replace the sized box with the logo or leave it like this
                 SizedBox(height: 150),
                 Text(
-                  'OnionChat',
+                  'ChatSeat',
                   style: TextStyle(
                     fontFamily: FontFamily_main,
                     fontSize: 56,
@@ -136,19 +137,28 @@ class _LoginScreenState extends State<LoginScreen> {
                     setState(() {
                       isLoggingIn = true;
                     });
-                    final result = await loginViewModel.login(
-                        _usernameController.text, _passwordController.text);
-                    if (result.isLeft) {
-                      final error = result.left;
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Error: ${error.message}")));
-                    } else {
-                      final connection = result.right;
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              "Logged in: ${connection.account.username}")));
-                      Navigator.of(context).pushNamedAndRemoveUntil(PostAuthenticationScreen.routeName, (Route<dynamic> route) => false, arguments: AuthenticatedArguments(connection));
-                    }
+                    // final result = await loginViewModel.login(
+                    //     _usernameController.text, _passwordController.text);
+                    // if (result.isLeft) {
+                    //   final error = result.left;
+                    //   ScaffoldMessenger.of(context).showSnackBar(
+                    //       SnackBar(content: Text("Error: ${error.message}")));
+                    // } else {
+                    //final connection = result.right;
+                    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    //     content:
+                    //         Text("Logged in: ${connection.account.username}")));
+                    // Navigator.of(context).pushNamedAndRemoveUntil(
+                    //     PostAuthenticationScreen.routeName,
+                    //     (Route<dynamic> route) => false,
+                    //     arguments: AuthenticatedArguments(connection));
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ContactsScreen(selfUserId: 'test123')),
+                    );
+                    //}
                     setState(() {
                       isLoggingIn = false;
                     });
@@ -185,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'New to OnionChat? ',
+                      'New to ChatSeat ? ',
                       style: TextStyle(
                         fontFamily: FontFamily_main,
                         fontSize: 18,

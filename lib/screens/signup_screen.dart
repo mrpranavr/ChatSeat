@@ -37,7 +37,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 // Replace the sized box with the logo or leave it like this
                 const SizedBox(height: 150),
                 Text(
-                  'OnionChat',
+                  'ChatSeat',
                   style: TextStyle(
                     fontFamily: FontFamily_main,
                     fontSize: 56,
@@ -157,13 +157,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     if (result.isLeft) {
                       final error = result.left;
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Connection failed: ${error.message}")));
+                          content:
+                              Text("Connection failed: ${error.message}")));
                     } else {
                       final registrationResult = result.right;
                       if (registrationResult.isLeft) {
                         final error = registrationResult.left;
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text("Error: ${error.code} - ${error.name}")));
+                            content:
+                                Text("Error: ${error.code} - ${error.name}")));
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text(

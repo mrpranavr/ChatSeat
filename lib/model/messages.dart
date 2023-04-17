@@ -91,7 +91,9 @@ class ChatMessage with ChangeNotifier {
   }
 
   void sentMessage(Messages message) {
+    print(message.message);
     _SpoofMessages.add(message);
+    print(_SpoofMessages[_SpoofMessages.length - 1].message);
     notifyListeners();
   }
 }

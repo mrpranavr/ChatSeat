@@ -51,15 +51,15 @@ class MyApp extends StatelessWidget {
             case PostAuthenticationScreen.routeName:
               final AuthenticatedArguments arguments =
                   settings.arguments as AuthenticatedArguments;
-              return PageRouteBuilder(pageBuilder: (context, a, b) {
-                return BlocProvider(
-                  create: (ctx) => PostAuthenticationCubit(
-                      InitialState(), arguments.connection),
-                  child: PostAuthenticationScreen(
-                      username: arguments.connection.account.fullJid.local ??
-                          "Unknown"),
-                );
-              });
+            //return PageRouteBuilder(pageBuilder: (context, a, b) {
+            // return BlocProvider(
+            //   create: (ctx) => PostAuthenticationCubit(
+            //       InitialState(), arguments.connection),
+            //   child: PostAuthenticationScreen(
+            //       username: arguments.connection.account.fullJid.local ??
+            //           "Unknown"),
+            // );
+            //});
           }
         },
       ),
